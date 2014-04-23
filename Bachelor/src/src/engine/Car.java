@@ -54,6 +54,7 @@ public class Car {
 			this.current_pos = this.current_pos + (- this.speed);
 			if ((current_pos - car_size) == 0)
 				ready_to_join = true;
+				System.out.println(this.current_direction+" hesdasdare");
 		}
 	}
 

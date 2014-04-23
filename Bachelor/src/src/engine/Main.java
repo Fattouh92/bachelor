@@ -181,6 +181,11 @@ public class Main {
 				joins_move.add(index);	
 			}
 		}
+		
+		for(i = 0; i<cars_to_move.size(); i++) {
+			Car tempCar = lanes.get(cars_to_move.get(i)).cars.remove(0);
+			lanes.get(tempCar.direction).addCar(tempCar);
+		}
 
 		/*int index_emergency = -1;
 		for (int k = 0; k < lanes.size(); k++) {
