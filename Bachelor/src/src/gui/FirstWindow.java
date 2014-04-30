@@ -15,6 +15,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -291,8 +292,8 @@ public class FirstWindow {
 					for ( j = 0; j < cars.size(); j++) {
 						Insets insets = lanes.get(i).getInsets();
 						g.setColor(Color.red);
-						g.fillRect(insets.top + 5*(lanes2.get(i).getDistance() - cars.get(j).getCurrent_pos()) , insets.bottom,
-								cars.get(j).getCar_size()*5, lanes.get(i).getHeight());
+						g.draw(new Rectangle(lanes.get(0).getLocation().x + 5*(lanes2.get(i).getDistance() - cars.get(j).getCurrent_pos()), lanes.get(0).getLocation().y,
+								cars.get(j).getCar_size()*5, lanes.get(i).getHeight()));
 						JLabel temp = new JLabel("Car");
 						temp.setForeground(Color.red);
 						temp.setBounds(insets.left + 5*(lanes2.get(i).getDistance() - cars.get(j).getCurrent_pos()) , insets.top,
@@ -309,8 +310,30 @@ public class FirstWindow {
 			super.paintComponent(g);
 			Graphics2D g2d = (Graphics2D) g;
 			drawLanes();
-			drawCars(g2d);
-			g.fillRect(lanes.get(0).getInsets().left, lanes.get(0).getInsets().top, 30, 30);
+			//drawCars(g2d);
+			//g2d.fillRect(lanes.get(2).getInsets().left, lanes.get(2).getInsets().top, 30, 30);
+			//g2d.draw(new Rectangle(lanes.get(0).getLocation().x,lanes.get(0).getLocation().y,50,50));
+			int i, j;
+			ArrayList<Lane> lanes2= new ArrayList<Lane>();
+			ArrayList<Car> cars= new ArrayList<Car>();
+			for(int counter = 0; counter < 10; counter ++) {
+				lanes2 = main.getLanes();
+				for( i = 0; i< lanes.size(); i++) {
+					lanes.get(i).removeAll();
+					cars = lanes2.get(i).getCars();
+					for ( j = 0; j < cars.size(); j++) {
+						Insets insets = lanes.get(i).getInsets();
+						g2d.setColor(Color.red);
+						g2d.draw(new Rectangle(lanes.get(i).getLocation().x + 5*(lanes2.get(i).getDistance() - cars.get(j).getCurrent_pos()), lanes.get(i).getLocation().y,
+								cars.get(j).getCar_size()*5, lanes.get(i).getHeight()));
+						JLabel temp = new JLabel("Car");
+						temp.setForeground(Color.red);
+						temp.setBounds(insets.left + 5*(lanes2.get(i).getDistance() - cars.get(j).getCurrent_pos()) , insets.top,
+								cars.get(j).getCar_size()*5, lanes.get(i).getHeight());
+						lanes.get(i).add(temp);
+					}
+				}
+			}
 		}
 	}
 }
