@@ -23,6 +23,7 @@ import java.util.ArrayList;
 public class FirstWindow {
 	Main main = new Main();
 	ArrayList<JPanel> lanes = new ArrayList<JPanel>();
+	ArrayList<int[]> lanes2 = new ArrayList<int[]>();
 	GamePanel panel = new GamePanel();
 	JFrame guiFrame;
 
@@ -194,7 +195,8 @@ public class FirstWindow {
 		}
 
 		public void drawLanes() {
-			main.read(8);
+			main.read();
+			
 			JPanel tempPanel;
 			Insets insets = panel.getInsets();
 			//0
@@ -205,8 +207,12 @@ public class FirstWindow {
 			panel.add(tempPanel);
 			tempPanel.setBounds(25 + insets.left, 130 + insets.top,
 					main.getLanes().get(0).getDistance()*5, 20);
-			if (!added)
+			if (!added) {
 				lanes.add(tempPanel);
+				int[] tempArray = {25 + insets.left, 130 + insets.top};
+				lanes2.add(tempArray);
+			}
+				
 			//1
 			tempPanel = new JPanel();
 			tempPanel.setBackground(Color.black);
@@ -215,8 +221,12 @@ public class FirstWindow {
 			panel.add(tempPanel);
 			tempPanel.setBounds(25 + insets.left, 155 + insets.top,
 					main.getLanes().get(1).getDistance()*5, 20);
-			if (!added)
+			if (!added){
 				lanes.add(tempPanel);
+				int[] tempArray1 = {25 + insets.left, 155 + insets.top};
+				lanes2.add(tempArray1);
+			}
+				
 			//2
 			tempPanel = new JPanel();
 			tempPanel.setBackground(Color.black);
@@ -225,8 +235,12 @@ public class FirstWindow {
 			panel.add(tempPanel);
 			tempPanel.setBounds(150 + insets.left, 5 + insets.top, 20,
 					main.getLanes().get(2).getDistance()*5);
-			if (!added)
+			if (!added) {
 				lanes.add(tempPanel);
+				int[] tempArray2 = {150 + insets.left, 5 + insets.top};
+				lanes2.add(tempArray2);
+			}
+				
 			//3
 			tempPanel = new JPanel();
 			tempPanel.setBackground(Color.black);
@@ -235,8 +249,12 @@ public class FirstWindow {
 			panel.add(tempPanel);
 			tempPanel.setBounds(175 + insets.left, 5 + insets.top, 20,
 					main.getLanes().get(3).getDistance()*5);
-			if (!added)
+			if (!added) {
 				lanes.add(tempPanel);
+				int[] tempArray3 = {175 + insets.left, 5 + insets.top};
+				lanes2.add(tempArray3);
+			}
+			
 			//4
 			tempPanel = new JPanel();
 			tempPanel.setBackground(Color.black);
@@ -245,8 +263,12 @@ public class FirstWindow {
 			panel.add(tempPanel);
 			tempPanel.setBounds(195 + insets.left, 130 + insets.top,
 					main.getLanes().get(4).getDistance()*5, 20);
-			if (!added)
+			if (!added){
 				lanes.add(tempPanel);
+				int[] tempArray4 = {195 + insets.left, 130 + insets.top};
+				lanes2.add(tempArray4);
+			}
+				
 			//5
 			tempPanel = new JPanel();
 			tempPanel.setBackground(Color.black);
@@ -255,8 +277,12 @@ public class FirstWindow {
 			panel.add(tempPanel);
 			tempPanel.setBounds(195 + insets.left, 155 + insets.top,
 					main.getLanes().get(5).getDistance()*5, 20);
-			if (!added)
+			if (!added) {
 				lanes.add(tempPanel);
+				int[] tempArray5 = {195 + insets.left, 155 + insets.top};
+				lanes2.add(tempArray5);
+			}
+	
 			//6
 			tempPanel = new JPanel();
 			tempPanel.setBackground(Color.black);
@@ -265,8 +291,12 @@ public class FirstWindow {
 			panel.add(tempPanel);
 			tempPanel.setBounds(175 + insets.left, 175 + insets.top, 20,
 					main.getLanes().get(6).getDistance()*5);
-			if (!added)
+			if (!added) {
 				lanes.add(tempPanel);
+				int[] tempArray6 = {175 + insets.left, 175 + insets.top};
+				lanes2.add(tempArray6);
+			}
+				
 			//7
 			tempPanel = new JPanel();
 			tempPanel.setBackground(Color.black);
@@ -275,8 +305,12 @@ public class FirstWindow {
 			panel.add(tempPanel);
 			tempPanel.setBounds(150 + insets.left, 175 + insets.top, 20,
 					main.getLanes().get(7).getDistance()*5);
-			if (!added)
+			if (!added) {
 				lanes.add(tempPanel);
+				int[] tempArray7 = {150 + insets.left, 175 + insets.top};
+				lanes2.add(tempArray7);
+			}
+				
 			added = true;
 		}
 

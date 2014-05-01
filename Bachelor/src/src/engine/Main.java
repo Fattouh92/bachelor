@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Main {
 	ArrayList<Lane> lanes = new ArrayList<Lane>();
 	ArrayList<Join> joins = new ArrayList<Join>();
-	public void read(int lanesNumber) {
+	public void read() {
 		BufferedReader reader = null;
 
 		try {
@@ -243,7 +243,7 @@ public class Main {
 
 	public static void main(String[]args) {
 		Main main = new Main();
-		main.read(0);
+		main.read();
 		main.runSimulation();
 		main.cross();
 	}

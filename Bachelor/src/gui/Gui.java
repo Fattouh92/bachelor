@@ -1,45 +1,43 @@
-package src.gui;
+package gui;
 
 import javax.swing.*;
+
+import engine.Lane;
+import engine.Main;
+import engine.Car;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class MyLoop extends JFrame implements ActionListener
+public class Gui extends JFrame implements ActionListener
 {
+	Main main = new Main();
 	private GamePanel gamePanel = new GamePanel();
 	private JButton startButton = new JButton("Start");
-	private JButton quitButton = new JButton("Quit");
-	private JButton pauseButton = new JButton("Pause");
 	private boolean running = false;
 	private boolean paused = false;
 	private int fps = 60;
 	private int frameCount = 0;
 
-	public MyLoop()
+	public Gui()
 	{
-		super("Fixed Timestep Game Loop Test");
-		Container cp = getContentPane();
-		cp.setLayout(new BorderLayout());
+		super("Bachelor");
+		setLayout(new BorderLayout());
 		JPanel p = new JPanel();
 		p.setLayout(new GridLayout(1,2));
 		p.add(startButton);
-		p.add(pauseButton);
-		p.add(quitButton);
-		cp.add(gamePanel, BorderLayout.CENTER);
-		cp.add(p, BorderLayout.SOUTH);
+		add(gamePanel, BorderLayout.CENTER);
+		add(p, BorderLayout.SOUTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(600, 600);
-
+		main.read();
 		startButton.addActionListener(this);
-		quitButton.addActionListener(this);
-		pauseButton.addActionListener(this);
 	}
 
 	public static void main(String[] args)
 	{
-		MyLoop game = new MyLoop();
+		Gui game = new Gui();
 		game.setVisible(true);
 	}
 
@@ -58,22 +56,6 @@ public class MyLoop extends JFrame implements ActionListener
 			{
 				startButton.setText("Start");
 			}
-		}
-		else if (s == pauseButton)
-		{
-			paused = !paused;
-			if (paused)
-			{
-				pauseButton.setText("Unpause");
-			}
-			else
-			{
-				pauseButton.setText("Pause");
-			}
-		}
-		else if (s == quitButton)
-		{
-			System.exit(0);
 		}
 	}
 
@@ -176,7 +158,8 @@ public class MyLoop extends JFrame implements ActionListener
 	}
 
 	private class GamePanel extends JPanel
-	{	ArrayList<Car> cars = new ArrayList<Car>();
+	{	
+		ArrayList<Lane> lanes = main.getLanes();
 		//Car car = new Car();
 		float interpolation;
 		/*float ballX, ballY, lastBallX, lastBallY;
@@ -188,8 +171,8 @@ public class MyLoop extends JFrame implements ActionListener
 
 		public GamePanel()
 		{
-			cars.add(new Car());
-			cars.add(new Car());
+			//cars.add(new Car(100, 100, 25, 25));
+			//cars.add(new Car(100, 100, 25, 25));
 			/*ballX = lastBallX = 100;
 			ballY = lastBallY = 100;
 			ballWidth = 25;
@@ -205,9 +188,13 @@ public class MyLoop extends JFrame implements ActionListener
 		}
 
 		public void update()
-		{	for (int i = 0; i < cars.size(); i++) {
-			cars.get(i).update();
-		}
+		{	
+			for (int i = 0; i < lanes.size(); i++) {
+				for (int k=0; k < lanes.get(i).getCars().size(); k++) {
+					lanes.get(i).getCars().get(k).update(getHeight(), getWidth());
+
+				}
+			}
 			//car.update();
 			/*lastBallX = ballX;
 			lastBallY = ballY;
@@ -241,27 +228,37 @@ public class MyLoop extends JFrame implements ActionListener
 		}
 
 		public void paintComponent(Graphics g)
-		{
-			for (int i = 0; i < cars.size(); i++) {
-				//BS way of clearing out the old rectangle to save CPU.
-				g.setColor(getBackground());
-				g.fillRect(cars.get(i).lastDrawX-1, cars.get(i).lastDrawY-1, cars.get(i).ballWidth+2, cars.get(i).ballHeight+2);
-				g.fillRect(5, 0, 75, 30);
-
-				g.setColor(Color.RED);
-				int drawX = (int) ((cars.get(i).ballX - cars.get(i).lastBallX) * interpolation + cars.get(i).lastBallX - cars.get(i).ballWidth/2);
-				int drawY = (int) ((cars.get(i).ballY - cars.get(i).lastBallY) * interpolation + cars.get(i).lastBallY - cars.get(i).ballHeight/2);
-				g.fillOval(drawX, drawY, cars.get(i).ballWidth, cars.get(i).ballHeight);
-
-				cars.get(i).lastDrawX = drawX;
-				cars.get(i).lastDrawY = drawY;
-
-				g.setColor(Color.BLACK);
-				g.drawString("FPS: " + fps, 5, 10);
-
-				frameCount++;
+		{	
+			ArrayList<Lane> lanes = main.getLanes();
+			for (int j=0; j < lanes.size(); j++) {
+				if (lanes.get(j).isHorizontal()) {
+					g.drawRect(lanes.get(j).getX(), lanes.get(j).getY(), lanes.get(j).getDistance(), 30);
+				} else {
+					g.drawRect(lanes.get(j).getX(), lanes.get(j).getY(), 30, lanes.get(j).getDistance());
+				}
 			}
-			
+
+			for (int c = 0; c < lanes.size(); c++) {
+				for (int i = 0; i < lanes.get(c).getCars().size(); i++) {
+
+
+					//BS way of clearing out the old rectangle to save CPU.
+					g.setColor(getBackground());
+					g.fillRect(lanes.get(c).getCars().get(i).getLastDrawX()-1, lanes.get(c).getCars().get(i).getLastDrawY()-1, lanes.get(c).getCars().get(i).getBallWidth()+2, lanes.get(c).getCars().get(i).getBallHeight()+2);
+					g.fillRect(5, 0, 75, 30);
+
+					g.setColor(Color.RED);
+					int drawX = (int) ((lanes.get(c).getCars().get(i).getBallX() - lanes.get(c).getCars().get(i).getLastBallX()) * interpolation + lanes.get(c).getCars().get(i).getLastBallX() - lanes.get(c).getCars().get(i).getBallWidth()/2);
+					int drawY = (int) ((lanes.get(c).getCars().get(i).getBallY() - lanes.get(c).getCars().get(i).getLastBallY()) * interpolation + lanes.get(c).getCars().get(i).getLastBallY() - lanes.get(c).getCars().get(i).getBallHeight()/2);
+					g.fillRect(drawX, drawY, lanes.get(c).getCars().get(i).getBallWidth(), lanes.get(c).getCars().get(i).getBallHeight());
+
+					lanes.get(c).getCars().get(i).setLastDrawX(drawX);
+					lanes.get(c).getCars().get(i).setLastDrawY(drawY);
+
+					g.setColor(Color.BLACK);
+					g.drawString("FPS: " + fps, 5, 10);
+				}}
+			frameCount++;
 		}
 	}
 
@@ -271,7 +268,7 @@ public class MyLoop extends JFrame implements ActionListener
 		int width, height;
 		float xVelocity, yVelocity;
 		float speed;
-		
+
 		int lastDrawX, lastDrawY;
 
 		public Ball()
@@ -323,57 +320,6 @@ public class MyLoop extends JFrame implements ActionListener
 
 		}
 	}*/
-	
-	public class Car {
-		float interpolation;
-		float ballX, ballY, lastBallX, lastBallY;
-		int ballWidth, ballHeight;
-		float ballXVel, ballYVel;
-		float ballSpeed;
 
-		int lastDrawX, lastDrawY;
-		
-		public Car() {
-			ballX = lastBallX = 100;
-			ballY = lastBallY = 100;
-			ballWidth = 25;
-			ballHeight = 25;
-			ballSpeed = 25;
-			ballXVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
-			ballYVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
-		}
-		
-		public void update() {
-			lastBallX = ballX;
-			lastBallY = ballY;
 
-			ballX += ballXVel;
-			ballY += ballYVel;
-
-			if (ballX + ballWidth/2 >= getWidth())
-			{
-				ballXVel *= -1;
-				ballX = getWidth() - ballWidth/2;
-				ballYVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
-			}
-			else if (ballX - ballWidth/2 <= 0)
-			{
-				ballXVel *= -1;
-				ballX = ballWidth/2;
-			}
-
-			if (ballY + ballHeight/2 >= getHeight())
-			{
-				ballYVel *= -1;
-				ballY = getHeight() - ballHeight/2;
-				ballXVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
-			}
-			else if (ballY - ballHeight/2 <= 0)
-			{
-				ballYVel *= -1;
-				ballY = ballHeight/2;
-			}
-		}
-		
-	}
 }
