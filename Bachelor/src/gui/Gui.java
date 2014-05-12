@@ -5,6 +5,7 @@ import javax.swing.*;
 import engine.Lane;
 import engine.Main;
 import engine.Car;
+import engine.Join;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -191,40 +192,21 @@ public class Gui extends JFrame implements ActionListener
 		{	
 			for (int i = 0; i < lanes.size(); i++) {
 				for (int k=0; k < lanes.get(i).getCars().size(); k++) {
-					lanes.get(i).getCars().get(k).update(getHeight(), getWidth());
-
+					if (lanes.get(i).isHorizontal()) {
+						if (lanes.get(i).isRight_start()) {
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getX(), lanes.get(i).getX()+lanes.get(i).getDistance(), true, true, main.getLanes(), main.getJoins());
+						} else {
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getX(), lanes.get(i).getX()+lanes.get(i).getDistance(), true, false, main.getLanes(), main.getJoins());
+						}
+					} else {
+						if (lanes.get(i).isRight_start()) {
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getY(), lanes.get(i).getY()+lanes.get(i).getDistance(), false, true, main.getLanes(), main.getJoins());
+						} else {
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getY(), lanes.get(i).getY()+lanes.get(i).getDistance(), false, false, main.getLanes(), main.getJoins());
+						}
+					}
 				}
 			}
-			//car.update();
-			/*lastBallX = ballX;
-			lastBallY = ballY;
-
-			ballX += ballXVel;
-			ballY += ballYVel;
-
-			if (ballX + ballWidth/2 >= getWidth())
-			{
-				ballXVel *= -1;
-				ballX = getWidth() - ballWidth/2;
-				ballYVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
-			}
-			else if (ballX - ballWidth/2 <= 0)
-			{
-				ballXVel *= -1;
-				ballX = ballWidth/2;
-			}
-
-			if (ballY + ballHeight/2 >= getHeight())
-			{
-				ballYVel *= -1;
-				ballY = getHeight() - ballHeight/2;
-				ballXVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
-			}
-			else if (ballY - ballHeight/2 <= 0)
-			{
-				ballYVel *= -1;
-				ballY = ballHeight/2;
-			}*/
 		}
 
 		public void paintComponent(Graphics g)
@@ -248,8 +230,8 @@ public class Gui extends JFrame implements ActionListener
 					g.fillRect(5, 0, 75, 30);
 
 					g.setColor(Color.RED);
-					int drawX = (int) ((lanes.get(c).getCars().get(i).getBallX() - lanes.get(c).getCars().get(i).getLastBallX()) * interpolation + lanes.get(c).getCars().get(i).getLastBallX() - lanes.get(c).getCars().get(i).getBallWidth()/2);
-					int drawY = (int) ((lanes.get(c).getCars().get(i).getBallY() - lanes.get(c).getCars().get(i).getLastBallY()) * interpolation + lanes.get(c).getCars().get(i).getLastBallY() - lanes.get(c).getCars().get(i).getBallHeight()/2);
+					int drawX = (int) ((lanes.get(c).getCars().get(i).getBallX() - lanes.get(c).getCars().get(i).getLastBallX()) * interpolation + lanes.get(c).getCars().get(i).getLastBallX());
+					int drawY = (int) ((lanes.get(c).getCars().get(i).getBallY() - lanes.get(c).getCars().get(i).getLastBallY()) * interpolation + lanes.get(c).getCars().get(i).getLastBallY());
 					g.fillRect(drawX, drawY, lanes.get(c).getCars().get(i).getBallWidth(), lanes.get(c).getCars().get(i).getBallHeight());
 
 					lanes.get(c).getCars().get(i).setLastDrawX(drawX);

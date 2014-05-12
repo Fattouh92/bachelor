@@ -1,54 +1,69 @@
 package engine;
 
+import java.util.ArrayList;
+
 public class Car {
 	int lane;
 	float ballX, ballY, lastBallX, lastBallY;
 	int ballWidth, ballHeight;
 	float ballXVel, ballYVel;
 	float ballSpeed;
+	boolean join = false;
+	int delay_count;
+	int priority;
+	boolean emergency;
+	int direction;
 
 	int lastDrawX, lastDrawY;
-	
-	public Car(int lane, int x, int y, int width, int height) {
+
+	public Car(int lane, int width, int height, int priority, int emergency) {
 		this.lane = lane;
-		ballX = lastBallX = x;
-		ballY = lastBallY = y;
 		ballWidth = width;
 		ballHeight = height;
-		ballSpeed = 25;
-		ballXVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
-		ballYVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
+		ballSpeed = 2;
+		this.priority = priority;
+		if (emergency == 1) {
+			this.emergency = true;
+		} else {
+			this.emergency = false;
+		}
+		//ballXVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
+		//ballYVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
 	}
-	
-	public void update(int height, int width) {
+
+	public void update2(int min, int max, boolean horizontal, boolean right_start,
+			ArrayList<Lane> lanes, ArrayList<Join> joins) {
 		lastBallX = ballX;
 		lastBallY = ballY;
-
-		ballX += ballXVel;
-		ballY += ballYVel;
-
-		if (ballX + ballWidth/2 >= width)
-		{
-			ballXVel *= -1;
-			ballX = width - ballWidth/2;
-			ballYVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
+		if(horizontal) {
+			this.ballX += this.ballXVel;
+			if (this.ballX + this.ballWidth >= max && right_start) {
+				this.ballXVel = 0;
+				join = true;
+			}
+			if (this.ballX <= min && !right_start) {
+				this.ballXVel = 0;
+				join = true;
+			}
+		} else {
+			this.ballY += this.ballYVel;
+			if (this.ballY + this.ballHeight >= max && right_start) {
+				this.ballYVel = 0;
+				join = true;
+			}
+			if (this.ballY <= min && !right_start) {
+				this.ballYVel = 0;
+				join = true;
+			}
 		}
-		else if (ballX - ballWidth/2 <= 0)
-		{
-			ballXVel *= -1;
-			ballX = ballWidth/2;
-		}
-
-		if (ballY + ballHeight/2 >= height)
-		{
-			ballYVel *= -1;
-			ballY = height - ballHeight/2;
-			ballXVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
-		}
-		else if (ballY - ballHeight/2 <= 0)
-		{
-			ballYVel *= -1;
-			ballY = ballHeight/2;
+		if (join) {
+			int index;
+			for(int j = 0; j< joins.size(); j++) {
+				if (joins.get(j).start == this.lane && joins.get(j).end == this.direction) {
+					index = j;
+					break;
+				}
+			}
 		}
 	}
 
@@ -139,5 +154,5 @@ public class Car {
 	public void setLastDrawY(int lastDrawY) {
 		this.lastDrawY = lastDrawY;
 	}
-	
+
 }

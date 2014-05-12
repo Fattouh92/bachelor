@@ -8,6 +8,8 @@ public class Lane {
 	int x, y;
 	int number;
 	int distance;
+	boolean right_start;
+	boolean emergency;
 	
 	public Lane(int x, int y, int number, int distance) {
 		super();
@@ -19,6 +21,8 @@ public class Lane {
 	
 	public void addCar(Car car) {
 		cars.add(car);
+		if (car.emergency)
+			this.emergency = true;
 	}
 
 	public ArrayList<Car> getCars() {
@@ -67,5 +71,13 @@ public class Lane {
 
 	public void setHorizontal(boolean horizontal) {
 		this.horizontal = horizontal;
+	}
+
+	public boolean isRight_start() {
+		return right_start;
+	}
+
+	public void setRight_start(boolean right_start) {
+		this.right_start = right_start;
 	}
 }
