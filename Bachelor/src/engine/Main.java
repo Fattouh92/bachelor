@@ -73,7 +73,7 @@ public class Main {
 		try {
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split("\\s");
-				Car temp_car = new Car(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]));
+				Car temp_car = new Car(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Integer.parseInt(parts[5]));
 				if (lanes.get(Integer.parseInt(parts[0])).horizontal && lanes.get(Integer.parseInt(parts[0])).right_start) {
 					temp_car.ballX = temp_car.lastBallX = lanes.get(Integer.parseInt(parts[0])).x;
 					temp_car.ballY = temp_car.lastBallY = lanes.get(Integer.parseInt(parts[0])).y;
