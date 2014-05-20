@@ -7,6 +7,7 @@ public class Join {
 	int start;
 	int end;
 	int duration;
+	int number_of_cars = 0;
 	
 	public Join(ArrayList<Integer> blocked_lanes, int start, int end, int duration) {
 		super();

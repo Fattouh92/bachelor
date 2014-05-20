@@ -82,14 +82,14 @@ public class Car {
 								if(this.ballX > this.blocked_car.ballX + this.blocked_car.ballWidth ) {
 									Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
 									System.out.println(temp_blocked_lane.number);
-									if (temp_blocked_lane.right_start) {
-										if (temp_blocked_lane.horizontal) {
+									if (temp_blocked_lane.horizontal) {
+										if (temp_blocked_lane.right_start) {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
 										}else {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
 										}
 									} else {
-										if (temp_blocked_lane.horizontal) {
+										if (temp_blocked_lane.right_start) {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
 										} else {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
@@ -101,13 +101,16 @@ public class Car {
 							//gayalha mn ta7t aw fo2
 							//bsa sa7 l fo2
 							if (this.ballWidth + this.ballX >= temp_car.ballX && this.ballY+this.ballHeight >= temp_car.ballY && this.ballY <= temp_car.ballY+temp_car.ballHeight && this.priority <= temp_car.priority) {
-								if (this.ballX < temp_car.ballX + temp_car.ballWidth && this.ballWidth + this.ballX > temp_car.ballX) {
+								if (this.ballX < temp_car.ballX + temp_car.ballWidth && this.ballWidth + this.ballX >= temp_car.ballX) {
 									temp_car.ballYVel = 0;
 									this.blocked_car = temp_car;
 									break;
+								} else {
+									if (this.ballX < temp_car.ballX + temp_car.ballWidth) {
+										this.ballXVel = 0;
+										break;
+									}
 								}
-								this.ballXVel = 0;
-								break;
 							} else {
 								this.ballXVel = 1;
 							}
@@ -116,14 +119,14 @@ public class Car {
 								if(this.ballX + this.ballWidth > this.blocked_car.ballX) {
 									Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
 									System.out.println(temp_blocked_lane.number);
-									if (temp_blocked_lane.right_start) {
-										if (temp_blocked_lane.horizontal) {
+									if (temp_blocked_lane.horizontal) {
+										if (temp_blocked_lane.right_start) {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
 										}else {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
 										}
 									} else {
-										if (temp_blocked_lane.horizontal) {
+										if (temp_blocked_lane.right_start) {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
 										} else {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
@@ -134,13 +137,16 @@ public class Car {
 							}
 							//sa7 llely mn ta7t
 							if (this.ballX <= temp_car.ballX+temp_car.ballWidth && this.ballY+this.ballHeight >= temp_car.ballY && this.ballY <= temp_car.ballY+temp_car.ballHeight && this.priority <= temp_car.priority) {
-								if (this.ballX < temp_car.ballX+temp_car.ballWidth) {
+								if (this.ballX < temp_car.ballX+temp_car.ballWidth && this.ballX + this.ballWidth >= temp_car.ballX ) {
 									temp_car.ballYVel = 0;
 									this.blocked_car = temp_car;
 									break;
+								} else {
+									if (this.ballX + this.ballHeight > temp_car.ballX) {
+										this.ballXVel = 0;
+										break;
+									}
 								}
-								this.ballXVel = 0;
-								break;
 							} else {
 								this.ballXVel = -1;
 							}
@@ -151,14 +157,14 @@ public class Car {
 								if(this.ballY < this.blocked_car.ballY + this.blocked_car.ballHeight ) {
 									Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
 									System.out.println(temp_blocked_lane.number);
-									if (temp_blocked_lane.right_start) {
-										if (temp_blocked_lane.horizontal) {
+									if (temp_blocked_lane.horizontal) {
+										if (temp_blocked_lane.right_start) {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
 										}else {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
 										}
 									} else {
-										if (temp_blocked_lane.horizontal) {
+										if (temp_blocked_lane.right_start) {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
 										} else {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
@@ -168,13 +174,16 @@ public class Car {
 								this.blocked_car = null;
 							}
 							if (this.ballHeight + this.ballY >= temp_car.ballY && this.ballX+this.ballWidth >= temp_car.ballX && this.ballX <= temp_car.ballX+temp_car.ballWidth && this.priority < temp_car.priority) {
-								if (this.ballHeight + this.ballY > temp_car.ballY) {
+								if (this.ballHeight + this.ballY > temp_car.ballY && this.ballY <= temp_car.ballY + temp_car.ballHeight) {
 									temp_car.ballXVel = 0;
 									this.blocked_car = temp_car;
 									break;
+								} else {
+									if (this.ballY < temp_car.ballY+temp_car.ballHeight) {
+										this.ballYVel = 0;
+										break;
+									}
 								}
-								this.ballYVel = 0;
-								break;
 							} else {
 								this.ballYVel = 1;
 							}
@@ -183,14 +192,15 @@ public class Car {
 								if(this.ballY + this.ballHeight > this.blocked_car.ballY ) {
 									Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
 									System.out.println(temp_blocked_lane.number);
-									if (temp_blocked_lane.right_start) {
-										if (temp_blocked_lane.horizontal) {
+									if (temp_blocked_lane.horizontal) {
+										if (temp_blocked_lane.right_start) {
+											System.out.println("move");
 											lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
 										}else {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
 										}
 									} else {
-										if (temp_blocked_lane.horizontal) {
+										if (temp_blocked_lane.right_start) {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
 										} else {
 											lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
@@ -200,13 +210,16 @@ public class Car {
 								this.blocked_car = null;
 							}
 							if (this.ballY <= temp_car.ballY + temp_car.ballHeight && this.ballX+this.ballWidth >= temp_car.ballX && this.ballX <= temp_car.ballX+temp_car.ballWidth && this.priority < temp_car.priority) {
-								if (this.ballY < temp_car.ballY + temp_car.ballHeight) {
+								if (this.ballY < temp_car.ballY + temp_car.ballHeight && this.ballY + this.ballHeight >= temp_car.ballY) {
 									temp_car.ballXVel = 0;
 									this.blocked_car = temp_car;
 									break;
+								} else {
+									if(this.ballY+this.ballHeight > temp_car.ballY) {
+										this.ballYVel = 0;
+										break;
+									}
 								}
-								this.ballYVel = 0;
-								break;
 							} else {
 								this.ballYVel = -1;
 							}
