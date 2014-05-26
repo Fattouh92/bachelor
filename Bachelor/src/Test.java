@@ -3,18 +3,26 @@ public class Test {
 	public static void min(String[]args) {
 		boolean right_start = false;
 		boolean horizontal = false;
-		if (right_start) {
-			if (horizontal) {
+		
+		
+		
+		if (horizontal) {
+			if (right_start) {
 
 			}else {
 
 			}
 		} else {
-			if (horizontal) {
+			if (right_start) {
 
 			} else {
 
 			}
 		}
+		
+		
+		
+		
+		
 	}
 }

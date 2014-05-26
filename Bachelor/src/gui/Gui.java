@@ -9,6 +9,7 @@ import engine.Join;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 public class Gui extends JFrame implements ActionListener
@@ -31,7 +32,7 @@ public class Gui extends JFrame implements ActionListener
 		add(gamePanel, BorderLayout.CENTER);
 		add(p, BorderLayout.SOUTH);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(600, 600);
+		setSize(1000, 700);
 		main.read();
 		startButton.addActionListener(this);
 	}
@@ -81,7 +82,7 @@ public class Gui extends JFrame implements ActionListener
 		final double TIME_BETWEEN_UPDATES = 1000000000 / GAME_HERTZ;
 		//At the very most we will update the game this many times before a new render.
 		//If you're worried about visual hitches more than perfect timing, set this to 1.
-		final int MAX_UPDATES_BEFORE_RENDER = 5;
+		final int MAX_UPDATES_BEFORE_RENDER = 1;
 		//We will need the last update time.
 		double lastUpdateTime = System.nanoTime();
 		//Store the last time we rendered.
@@ -194,15 +195,15 @@ public class Gui extends JFrame implements ActionListener
 				for (int k=0; k < lanes.get(i).getCars().size(); k++) {
 					if (lanes.get(i).isHorizontal()) {
 						if (lanes.get(i).isRight_start()) {
-							lanes.get(i).getCars().get(k).update2(lanes.get(i).getX(), lanes.get(i).getX()+lanes.get(i).getDistance(), true, true, main.getLanes(), main.getJoins());
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getX(), lanes.get(i).getX()+lanes.get(i).getDistance(), true, true, main.getLanes(), main.getJoins(), main.getSquares());
 						} else {
-							lanes.get(i).getCars().get(k).update2(lanes.get(i).getX(), lanes.get(i).getX()+lanes.get(i).getDistance(), true, false, main.getLanes(), main.getJoins());
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getX(), lanes.get(i).getX()+lanes.get(i).getDistance(), true, false, main.getLanes(), main.getJoins(), main.getSquares());
 						}
 					} else {
 						if (lanes.get(i).isRight_start()) {
-							lanes.get(i).getCars().get(k).update2(lanes.get(i).getY(), lanes.get(i).getY()+lanes.get(i).getDistance(), false, true, main.getLanes(), main.getJoins());
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getY(), lanes.get(i).getY()+lanes.get(i).getDistance(), false, true, main.getLanes(), main.getJoins(), main.getSquares());
 						} else {
-							lanes.get(i).getCars().get(k).update2(lanes.get(i).getY(), lanes.get(i).getY()+lanes.get(i).getDistance(), false, false, main.getLanes(), main.getJoins());
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getY(), lanes.get(i).getY()+lanes.get(i).getDistance(), false, false, main.getLanes(), main.getJoins(), main.getSquares());
 						}
 					}
 				}
@@ -211,35 +212,39 @@ public class Gui extends JFrame implements ActionListener
 
 		public void paintComponent(Graphics g)
 		{	
+			Graphics2D g2d = (Graphics2D)g;
+			super.paintComponent(g2d);
 			ArrayList<Lane> lanes = main.getLanes();
 			for (int j=0; j < lanes.size(); j++) {
 				if (lanes.get(j).isHorizontal()) {
-					g.drawRect(lanes.get(j).getX(), lanes.get(j).getY(), lanes.get(j).getDistance(), 30);
+					g2d.drawRect(lanes.get(j).getX(), lanes.get(j).getY(), lanes.get(j).getDistance(), 40);
 				} else {
-					g.drawRect(lanes.get(j).getX(), lanes.get(j).getY(), 30, lanes.get(j).getDistance());
+					g2d.drawRect(lanes.get(j).getX(), lanes.get(j).getY(), 40, lanes.get(j).getDistance());
 				}
 			}
 
 			for (int c = 0; c < lanes.size(); c++) {
 				for (int i = 0; i < lanes.get(c).getCars().size(); i++) {
-
-
 					//BS way of clearing out the old rectangle to save CPU.
-					g.setColor(getBackground());
-					g.fillRect(lanes.get(c).getCars().get(i).getLastDrawX()-1, lanes.get(c).getCars().get(i).getLastDrawY()-1, lanes.get(c).getCars().get(i).getBallWidth()+2, lanes.get(c).getCars().get(i).getBallHeight()+2);
-					g.fillRect(5, 0, 75, 30);
+					g2d.setColor(getBackground());
+					g2d.fillRect(lanes.get(c).getCars().get(i).getLastDrawX()-1, lanes.get(c).getCars().get(i).getLastDrawY()-1, lanes.get(c).getCars().get(i).getBallWidth()+2, lanes.get(c).getCars().get(i).getBallHeight()+2);
+					g2d.fillRect(5, 0, 75, 30);
 
-					g.setColor(Color.RED);
+					g2d.setColor(Color.RED);
 					int drawX = (int) ((lanes.get(c).getCars().get(i).getBallX() - lanes.get(c).getCars().get(i).getLastBallX()) * interpolation + lanes.get(c).getCars().get(i).getLastBallX());
 					int drawY = (int) ((lanes.get(c).getCars().get(i).getBallY() - lanes.get(c).getCars().get(i).getLastBallY()) * interpolation + lanes.get(c).getCars().get(i).getLastBallY());
+					AffineTransform old = g2d.getTransform();
+					g2d.rotate(Math.toRadians(lanes.get(c).getCars().get(i).getAngle()),lanes.get(c).getCars().get(i).getBallX()+lanes.get(c).getCars().get(i).getBallWidth()/2,lanes.get(c).getCars().get(i).getBallY()+lanes.get(c).getCars().get(i).getBallHeight()/2);
 					g.fillRect(drawX, drawY, lanes.get(c).getCars().get(i).getBallWidth(), lanes.get(c).getCars().get(i).getBallHeight());
+					g2d.setTransform(old);
 
 					lanes.get(c).getCars().get(i).setLastDrawX(drawX);
 					lanes.get(c).getCars().get(i).setLastDrawY(drawY);
 
-					g.setColor(Color.BLACK);
-					g.drawString("FPS: " + fps, 5, 10);
-				}}
+					g2d.setColor(Color.BLACK);
+					g2d.drawString("FPS: " + fps, 5, 10);
+				}
+			}
 			frameCount++;
 		}
 	}

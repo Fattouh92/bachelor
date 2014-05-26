@@ -12,19 +12,21 @@ public class Car {
 	int delay_count;
 	int priority;
 	boolean emergency;
-	int direction;
+	//int direction;
+	ArrayList<Integer> directions;
 	boolean arrived;
 	Car blocked_car;
+	int angle = 0;
 
 	int lastDrawX, lastDrawY;
 
-	public Car(int lane, int width, int height, int priority, int emergency, int direction) {
+	public Car(int lane, int width, int height, int priority, int emergency, ArrayList<Integer> directions) {
 		this.lane = lane;
 		ballWidth = width;
 		ballHeight = height;
 		ballSpeed = 2;
 		this.priority = priority;
-		this.direction = direction;
+		this.directions = directions;
 		if (emergency == 1) {
 			this.emergency = true;
 		} else {
@@ -35,84 +37,145 @@ public class Car {
 	}
 
 	public void update2(int min, int max, boolean horizontal, boolean right_start,
-			ArrayList<Lane> lanes, ArrayList<Join> joins) {
+			ArrayList<Lane> lanes, ArrayList<Join> joins, ArrayList<Square> squares) {
 		if(arrived) {
-		}
-		if(this.ballX == lanes.get(direction).x && this.ballY == lanes.get(direction).y) {
-			this.ballXVel = this.ballYVel = 0;
-			this.join = false;
-			this.lane = direction;
-			this.arrived = true;
-		}
-		if(!arrived) {
+
+		} else {
 			lastBallX = ballX;
 			lastBallY = ballY;
-			if(horizontal) {
-				this.ballX += this.ballXVel;
-				if (this.ballX + this.ballWidth >= max && right_start) {
-					int counter_join = 0;
-					for(int b = 0; b< lanes.size(); b++) {
-						for(int z = 0; z< lanes.get(b).cars.size(); z++) {
-							if (lanes.get(b).cars.get(z).join) {
-								counter_join++;
+
+			Square my_square = null;
+			for(int r = 0; r < squares.size(); r++) {
+				for (int w = 0; w < squares.get(r).lanes.size(); w++) {
+					if (squares.get(r).lanes.get(w).intValue() == this.lane) {
+						my_square = squares.get(r);
+						break;
+					}
+				}
+			}
+			
+			//for leaving join
+			if(!this.directions.isEmpty()) {
+				if (lanes.get(directions.get(0)).horizontal) {
+					if (lanes.get(directions.get(0)).right_start) {
+						if(this.ballX == lanes.get(directions.get(0)).x && this.ballY == lanes.get(directions.get(0)).y) {
+							//this.ballXVel = this.ballYVel = 0;
+							this.join = false;
+							if(my_square != null) {
+								my_square.number_cars--;
 							}
+							this.lane = this.directions.remove(0);
+						}
+					} else {
+						if(this.ballX+this.ballWidth == lanes.get(directions.get(0)).x + lanes.get(directions.get(0)).distance && this.ballY == lanes.get(directions.get(0)).y) {
+							//this.ballXVel = this.ballYVel = 0;
+							this.join = false;
+							if(my_square != null) {
+								my_square.number_cars--;
+							}
+							this.lane = this.directions.remove(0);
 						}
 					}
-					if (counter_join < 3)
+				} else {
+					if (lanes.get(directions.get(0)).right_start) {
+						if(this.ballX == lanes.get(directions.get(0)).x && this.ballY == lanes.get(directions.get(0)).y) {
+							//this.ballXVel = this.ballYVel = 0;
+							this.join = false;
+							if(my_square != null) {
+								my_square.number_cars--;
+							}
+							this.lane = this.directions.remove(0);
+						}
+					} else {
+						if(this.ballX == lanes.get(directions.get(0)).x && this.ballY+this.ballHeight == lanes.get(directions.get(0)).y+lanes.get(directions.get(0)).distance) {
+							//this.ballXVel = this.ballYVel = 0;
+							this.join = false;
+							if(my_square != null) {
+								my_square.number_cars--;
+							}
+							this.lane = this.directions.remove(0);
+						}
+					}
+				}
+				
+				//for arriving and stopping
+			} else {
+				if (horizontal) {
+					if (right_start) {
+						if (this.ballX + this.ballWidth == lanes.get(this.lane).endX && this.ballY == lanes.get(this.lane).endY) {
+							this.ballXVel = this.ballYVel = 0;
+							this.arrived = true;
+							lanes.get(this.lane).updateEnds(this.ballWidth, 0);
+						}
+					}else {
+						if (this.ballX == lanes.get(this.lane).endX && this.ballY == lanes.get(this.lane).endY) {
+							this.ballXVel = this.ballYVel = 0;
+							this.arrived = true;
+							lanes.get(this.lane).updateEnds(-this.ballWidth, 0);
+						}
+					}
+				} else {
+					if (right_start) {
+						if (this.ballX == lanes.get(this.lane).endX && this.ballY + this.ballHeight  == lanes.get(this.lane).endY) {
+							this.ballXVel = this.ballYVel = 0;
+							this.arrived = true;
+							lanes.get(this.lane).updateEnds(0, this.ballHeight);
+						}
+					}else {
+						if (this.ballX == lanes.get(this.lane).endX && this.ballY== lanes.get(this.lane).endY) {
+							this.ballXVel = this.ballYVel = 0;
+							this.arrived = true;
+							lanes.get(this.lane).updateEnds(0, -this.ballHeight);
+						}
+					}
+				}
+			}
+			this.ballX += this.ballXVel;
+			this.ballY += this.ballYVel;
+
+			if(horizontal) {
+				if (this.ballX + this.ballWidth == max && right_start) {
+					if (my_square.number_cars < 3) {
 						join = true;
+						my_square.number_cars++;
+					}
 					else
 						this.ballXVel = 0;
 				}
-				if (this.ballX <= min && !right_start) {
-					int counter_join = 0;
-					for(int b = 0; b< lanes.size(); b++) {
-						for(int z = 0; z< lanes.get(b).cars.size(); z++) {
-							if (lanes.get(b).cars.get(z).join) {
-								counter_join++;
-							}
-						}
-					}
-					if (counter_join < 3)
+				if (this.ballX == min && !right_start) {
+					if (my_square.number_cars < 3) {
 						join = true;
+						my_square.number_cars++;
+					}
 					else
-						this.ballXVel = 0;			
+						this.ballXVel = 0;
 				}
 			} else {
-				this.ballY += this.ballYVel;
-				if (this.ballY + this.ballHeight >= max && right_start) {
-					int counter_join = 0;
-					for(int b = 0; b< lanes.size(); b++) {
-						for(int z = 0; z< lanes.get(b).cars.size(); z++) {
-							if (lanes.get(b).cars.get(z).join) {
-								counter_join++;
-							}
-						}
-					}
-					if (counter_join < 3)
+				if (this.ballY + this.ballHeight == max && right_start) {
+					if (my_square.number_cars < 3) {
 						join = true;
+						my_square.number_cars++;
+					}
 					else
 						this.ballYVel = 0;
 				}
-				if (this.ballY <= min && !right_start) {
-					int counter_join = 0;
-					for(int b = 0; b< lanes.size(); b++) {
-						for(int z = 0; z< lanes.get(b).cars.size(); z++) {
-							if (lanes.get(b).cars.get(z).join) {
-								counter_join++;
-							}
-						}
-					}
-					if (counter_join < 3)
+				if (this.ballY == min && !right_start) {
+					if (my_square.number_cars < 3) {
 						join = true;
+						my_square.number_cars++;
+					}
 					else
 						this.ballYVel = 0;
 				}
 			}
 			if (join) {
+				boolean rotate = false;
 				int index = 0;
 				for(int j = 0; j< joins.size(); j++) {
-					if (joins.get(j).start == this.lane && joins.get(j).end == this.direction) {
+					if (joins.get(j).start == this.lane && joins.get(j).end == this.directions.get(0).intValue()) {
 						index = j;
+						if (joins.get(j).blocked_lanes.size() == 3)
+							rotate = true;
 						break;
 					}
 				}
@@ -126,7 +189,6 @@ public class Car {
 								if(this.blocked_car != null) {
 									if(this.ballX > this.blocked_car.ballX + this.blocked_car.ballWidth ) {
 										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
-										System.out.println(temp_blocked_lane.number);
 										if (temp_blocked_lane.horizontal) {
 											if (temp_blocked_lane.right_start) {
 												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
@@ -164,7 +226,6 @@ public class Car {
 								if(this.blocked_car != null) {
 									if(this.ballX + this.ballWidth > this.blocked_car.ballX) {
 										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
-										System.out.println(temp_blocked_lane.number);
 										if (temp_blocked_lane.horizontal) {
 											if (temp_blocked_lane.right_start) {
 												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
@@ -203,7 +264,6 @@ public class Car {
 								if(this.blocked_car != null) {
 									if(this.ballY < this.blocked_car.ballY + this.blocked_car.ballHeight ) {
 										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
-										System.out.println(temp_blocked_lane.number);
 										if (temp_blocked_lane.horizontal) {
 											if (temp_blocked_lane.right_start) {
 												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
@@ -239,10 +299,8 @@ public class Car {
 								if(this.blocked_car != null) {
 									if(this.ballY + this.ballHeight > this.blocked_car.ballY ) {
 										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
-										System.out.println(temp_blocked_lane.number);
 										if (temp_blocked_lane.horizontal) {
 											if (temp_blocked_lane.right_start) {
-												System.out.println("move");
 												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
 											}else {
 												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
@@ -365,6 +423,78 @@ public class Car {
 
 	public void setLastDrawY(int lastDrawY) {
 		this.lastDrawY = lastDrawY;
+	}
+
+	public int getLane() {
+		return lane;
+	}
+
+	public void setLane(int lane) {
+		this.lane = lane;
+	}
+
+	public boolean isJoin() {
+		return join;
+	}
+
+	public void setJoin(boolean join) {
+		this.join = join;
+	}
+
+	public int getDelay_count() {
+		return delay_count;
+	}
+
+	public void setDelay_count(int delay_count) {
+		this.delay_count = delay_count;
+	}
+
+	public int getPriority() {
+		return priority;
+	}
+
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+
+	public boolean isEmergency() {
+		return emergency;
+	}
+
+	public void setEmergency(boolean emergency) {
+		this.emergency = emergency;
+	}
+
+	public ArrayList<Integer> getDirections() {
+		return directions;
+	}
+
+	public void setDirections(ArrayList<Integer> directions) {
+		this.directions = directions;
+	}
+
+	public boolean isArrived() {
+		return arrived;
+	}
+
+	public void setArrived(boolean arrived) {
+		this.arrived = arrived;
+	}
+
+	public Car getBlocked_car() {
+		return blocked_car;
+	}
+
+	public void setBlocked_car(Car blocked_car) {
+		this.blocked_car = blocked_car;
+	}
+
+	public int getAngle() {
+		return angle;
+	}
+
+	public void setAngle(int angle) {
+		this.angle = angle;
 	}
 
 }

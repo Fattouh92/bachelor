@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Main {
 	ArrayList<Lane> lanes = new ArrayList<Lane>();
 	ArrayList<Join> joins = new ArrayList<Join>();
+	ArrayList<Square> squares = new ArrayList<Square>();
 
 	public void read() {
 		BufferedReader reader = null;
@@ -24,17 +25,7 @@ public class Main {
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split("\\s");
 				lanes.add(new Lane(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
-						Integer.parseInt(parts[2]), Integer.parseInt(parts[3])));
-				if (Integer.parseInt(parts[4]) == 0) {
-					lanes.get(lanes.size()-1).horizontal = true;
-				} else {
-					lanes.get(lanes.size()-1).horizontal = false;
-				}
-				if (Integer.parseInt(parts[5]) == 1) {
-					lanes.get(lanes.size()-1).right_start = true;
-				} else {
-					lanes.get(lanes.size()-1).right_start = false;
-				}
+						Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Integer.parseInt(parts[5])));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -62,6 +53,27 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		try {
+			reader = new BufferedReader(new FileReader("squares.txt"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split("\\s");
+				ArrayList<Integer> Temp = new ArrayList<Integer>();
+				for (int c = 0; c < parts.length; c++) {
+					Temp.add(new Integer(Integer.parseInt(parts[c])));
+				}
+				squares.add(new Square(Temp));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		try {
 			reader = new BufferedReader(new FileReader("cars2.txt"));
@@ -73,7 +85,11 @@ public class Main {
 		try {
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split("\\s");
-				Car temp_car = new Car(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Integer.parseInt(parts[5]));
+				ArrayList<Integer> Temp = new ArrayList<Integer>();
+				for (int c = 5; c < parts.length; c++) {
+					Temp.add(new Integer(Integer.parseInt(parts[c])));
+				}
+				Car temp_car = new Car(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Temp);
 				if (lanes.get(Integer.parseInt(parts[0])).horizontal && lanes.get(Integer.parseInt(parts[0])).right_start) {
 					temp_car.ballX = temp_car.lastBallX = lanes.get(Integer.parseInt(parts[0])).x;
 					temp_car.ballY = temp_car.lastBallY = lanes.get(Integer.parseInt(parts[0])).y;
@@ -116,5 +132,13 @@ public class Main {
 
 	public void setJoins(ArrayList<Join> joins) {
 		this.joins = joins;
+	}
+
+	public ArrayList<Square> getSquares() {
+		return squares;
+	}
+
+	public void setSquares(ArrayList<Square> squares) {
+		this.squares = squares;
 	}
 }

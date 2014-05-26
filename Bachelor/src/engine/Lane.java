@@ -10,19 +10,52 @@ public class Lane {
 	int distance;
 	boolean right_start;
 	boolean emergency;
+	int endX, endY;
 	
-	public Lane(int x, int y, int number, int distance) {
+	public Lane(int x, int y, int number, int distance, int hor, int right) {
 		super();
 		this.x = x;
 		this.y = y;
 		this.number = number;
 		this.distance = distance;
+		if (hor == 0) {
+			this.horizontal = true;
+		} else {
+			this.horizontal = false;
+		}
+		if (right == 1) {
+			this.right_start = true;
+		} else {
+			this.right_start = false;
+		}
+		if(right_start) {
+			if (this.horizontal) {
+				this.endX = this.x + distance;
+				this.endY = this.y;
+			} else {
+				this.endX = this.x;
+				this.endY = this.y + distance;
+			}
+		} else {
+			if (this.horizontal) {
+				this.endX = this.x;
+				this.endY = this.y;
+			} else {
+				this.endX = this.x;
+				this.endY = this.y;
+			}
+		}
 	}
 	
 	public void addCar(Car car) {
 		cars.add(car);
 		if (car.emergency)
 			this.emergency = true;
+	}
+	
+	public void updateEnds(int x, int y) {
+		this.endX -= x;
+		this.endY -= y;
 	}
 
 	public ArrayList<Car> getCars() {
