@@ -8,13 +8,25 @@ public class Join {
 	int end;
 	int duration;
 	int number_of_cars = 0;
+	boolean rotate;
+	boolean increase;
 	
-	public Join(ArrayList<Integer> blocked_lanes, int start, int end, int duration) {
+	public Join(ArrayList<Integer> blocked_lanes, int start, int end, int rotate, int increase, int duration) {
 		super();
 		this.blocked_lanes = blocked_lanes;
 		this.start = start;
 		this.end = end;
 		this.duration = duration;
+		if (rotate == 1) {
+			this.rotate = true;
+		} else {
+			this.rotate = false;
+		}
+		if (increase == 1) {
+			this.increase = true;
+		} else {
+			this.increase = false;
+		}
 	}
 	
 	public boolean canPass(int lane) {

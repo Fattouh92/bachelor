@@ -43,11 +43,11 @@ public class Main {
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split("\\s");
 				ArrayList<Integer> Temp = new ArrayList<Integer>();
-				for (int c = 3; c < parts.length; c++) {
+				for (int c = 5; c < parts.length; c++) {
 					Temp.add(new Integer(Integer.parseInt(parts[c])));
 				}
 				joins.add(new Join(Temp, Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
-						Integer.parseInt(parts[2])));
+						Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4])));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

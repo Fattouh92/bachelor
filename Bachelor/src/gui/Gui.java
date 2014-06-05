@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Gui extends JFrame implements ActionListener
 {
@@ -230,11 +231,32 @@ public class Gui extends JFrame implements ActionListener
 					g2d.fillRect(lanes.get(c).getCars().get(i).getLastDrawX()-1, lanes.get(c).getCars().get(i).getLastDrawY()-1, lanes.get(c).getCars().get(i).getBallWidth()+2, lanes.get(c).getCars().get(i).getBallHeight()+2);
 					g2d.fillRect(5, 0, 75, 30);
 
-					g2d.setColor(Color.RED);
+					ArrayList<Integer> temp_directions = lanes.get(c).getCars().get(i).getDirections(); 
+					g2d.setColor(lanes.get(c).getCars().get(i).getColor());
+					if(!lanes.get(c).getCars().get(i).isArrived()) {
+						if (!lanes.get(c).getCars().get(i).isJoin()) {
+							Lane temp_lane = this.lanes.get(lanes.get(c).getCars().get(i).getLane());
+							if (temp_lane.isHorizontal()) {
+								g2d.fillRect(temp_lane.getX(), temp_lane.getY() + 15, temp_lane.getDistance(), 10);
+							} else {
+								g2d.fillRect(temp_lane.getX() + 15, temp_lane.getY(), 10,temp_lane.getDistance());
+							}
+						}
+						for(int d = 0; d< temp_directions.size(); d++) {
+							Lane temp_lane = lanes.get(temp_directions.get(d));
+							if (temp_lane.isHorizontal()) {
+								g2d.fillRect(temp_lane.getX(), temp_lane.getY() + 15, temp_lane.getDistance(), 10);
+							} else {
+								g2d.fillRect(temp_lane.getX() + 15, temp_lane.getY(), 10,temp_lane.getDistance());
+							}
+						}
+					}
+
 					int drawX = (int) ((lanes.get(c).getCars().get(i).getBallX() - lanes.get(c).getCars().get(i).getLastBallX()) * interpolation + lanes.get(c).getCars().get(i).getLastBallX());
 					int drawY = (int) ((lanes.get(c).getCars().get(i).getBallY() - lanes.get(c).getCars().get(i).getLastBallY()) * interpolation + lanes.get(c).getCars().get(i).getLastBallY());
 					AffineTransform old = g2d.getTransform();
 					g2d.rotate(Math.toRadians(lanes.get(c).getCars().get(i).getAngle()),lanes.get(c).getCars().get(i).getBallX()+lanes.get(c).getCars().get(i).getBallWidth()/2,lanes.get(c).getCars().get(i).getBallY()+lanes.get(c).getCars().get(i).getBallHeight()/2);
+					g2d.setColor(Color.RED);
 					g.fillRect(drawX, drawY, lanes.get(c).getCars().get(i).getBallWidth(), lanes.get(c).getCars().get(i).getBallHeight());
 					g2d.setTransform(old);
 

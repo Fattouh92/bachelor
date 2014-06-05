@@ -1,6 +1,8 @@
 package engine;
 
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Car {
 	int lane;
@@ -12,11 +14,12 @@ public class Car {
 	int delay_count;
 	int priority;
 	boolean emergency;
-	//int direction;
 	ArrayList<Integer> directions;
 	boolean arrived;
 	Car blocked_car;
-	int angle = 0;
+	double angle = 0;
+	Color color = null;
+	boolean rotated = false;
 
 	int lastDrawX, lastDrawY;
 
@@ -32,8 +35,13 @@ public class Car {
 		} else {
 			this.emergency = false;
 		}
-		//ballXVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
-		//ballYVel = (float) Math.random() * ballSpeed*2 - ballSpeed;
+		this.color = getRandomColor();
+	}
+
+	private Random randomNumber = new Random();
+
+	private Color getRandomColor() {
+		return new Color(0, randomNumber.nextFloat(), randomNumber.nextFloat());
 	}
 
 	public void update2(int min, int max, boolean horizontal, boolean right_start,
@@ -53,51 +61,123 @@ public class Car {
 					}
 				}
 			}
-			
+
+			boolean rotate = false;
+			boolean increase = false;
+			int index = 0;
+			for(int j = 0; j< joins.size(); j++) {
+				if (joins.get(j).start == this.lane && joins.get(j).end == this.directions.get(0).intValue()) {
+					index = j;
+					if (joins.get(j).rotate) {
+						rotate = true;
+						if (joins.get(j).increase) {
+							increase = true;
+						}
+					}
+					break;
+				}
+			}
+
 			//for leaving join
 			if(!this.directions.isEmpty()) {
-				if (lanes.get(directions.get(0)).horizontal) {
-					if (lanes.get(directions.get(0)).right_start) {
-						if(this.ballX == lanes.get(directions.get(0)).x && this.ballY == lanes.get(directions.get(0)).y) {
-							//this.ballXVel = this.ballYVel = 0;
-							this.join = false;
-							if(my_square != null) {
-								my_square.number_cars--;
+				if (rotate) {
+					if (lanes.get(directions.get(0)).horizontal) {
+						if (lanes.get(directions.get(0)).right_start) {
+							if(this.ballY == lanes.get(directions.get(0)).y) {
+								rotated = false;
+								this.ballYVel = 0;
+								this.join = false;
+								if(my_square != null) {
+									my_square.number_cars--;
+									my_square.rotate = false;
+								}
+								lanes.get(directions.get(0)).cars.add(lanes.get(this.lane).cars.remove(0));
+								this.lane = this.directions.remove(0);
 							}
-							this.lane = this.directions.remove(0);
+						} else {
+							if(this.ballX+this.ballWidth == lanes.get(directions.get(0)).x + lanes.get(directions.get(0)).distance) {
+								rotated = false;
+								this.ballYVel = 0;
+								this.join = false;
+								if(my_square != null) {
+									my_square.number_cars--;
+									my_square.rotate = false;
+								}
+								lanes.get(directions.get(0)).cars.add(lanes.get(this.lane).cars.remove(0));
+								this.lane = this.directions.remove(0);
+							}
 						}
 					} else {
-						if(this.ballX+this.ballWidth == lanes.get(directions.get(0)).x + lanes.get(directions.get(0)).distance && this.ballY == lanes.get(directions.get(0)).y) {
-							//this.ballXVel = this.ballYVel = 0;
-							this.join = false;
-							if(my_square != null) {
-								my_square.number_cars--;
+						if (lanes.get(directions.get(0)).right_start) {
+							if (this.ballX == lanes.get(directions.get(0)).x) {
+								rotated = false;
+								this.ballXVel = 0;
+								this.join = false;
+								if(my_square != null) {
+									my_square.number_cars--;
+									my_square.rotate = false;
+								}
+								lanes.get(directions.get(0)).cars.add(lanes.get(this.lane).cars.remove(0));
+								this.lane = this.directions.remove(0);
 							}
-							this.lane = this.directions.remove(0);
+						} else {
+							if (this.ballY+this.ballHeight == lanes.get(directions.get(0)).y+lanes.get(directions.get(0)).distance) {
+								rotated = false;
+								this.ballXVel = 0;
+								this.join = false;
+								if(my_square != null) {
+									my_square.number_cars--;
+									my_square.rotate = false;
+								}
+								lanes.get(directions.get(0)).cars.add(lanes.get(this.lane).cars.remove(0));
+								this.lane = this.directions.remove(0);
+							}
 						}
 					}
 				} else {
-					if (lanes.get(directions.get(0)).right_start) {
-						if(this.ballX == lanes.get(directions.get(0)).x && this.ballY == lanes.get(directions.get(0)).y) {
-							//this.ballXVel = this.ballYVel = 0;
-							this.join = false;
-							if(my_square != null) {
-								my_square.number_cars--;
+					if (lanes.get(directions.get(0)).horizontal) {
+						if (lanes.get(directions.get(0)).right_start) {
+							if(this.ballX == lanes.get(directions.get(0)).x && this.ballY == lanes.get(directions.get(0)).y) {
+								this.join = false;
+								if(my_square != null) {
+									my_square.number_cars--;
+								}
+								lanes.get(directions.get(0)).cars.add(lanes.get(this.lane).cars.remove(0));
+								this.lane = this.directions.remove(0);
 							}
-							this.lane = this.directions.remove(0);
+						} else {
+							if(this.ballX+this.ballWidth == lanes.get(directions.get(0)).x + lanes.get(directions.get(0)).distance && this.ballY == lanes.get(directions.get(0)).y) {
+								this.join = false;
+								if(my_square != null) {
+									my_square.number_cars--;
+								}
+								lanes.get(directions.get(0)).cars.add(lanes.get(this.lane).cars.remove(0));
+								this.lane = this.directions.remove(0);
+							}
 						}
 					} else {
-						if(this.ballX == lanes.get(directions.get(0)).x && this.ballY+this.ballHeight == lanes.get(directions.get(0)).y+lanes.get(directions.get(0)).distance) {
-							//this.ballXVel = this.ballYVel = 0;
-							this.join = false;
-							if(my_square != null) {
-								my_square.number_cars--;
+						if (lanes.get(directions.get(0)).right_start) {
+							if(this.ballX == lanes.get(directions.get(0)).x && this.ballY == lanes.get(directions.get(0)).y) {
+								this.join = false;
+								if(my_square != null) {
+									my_square.number_cars--;
+								}
+								lanes.get(directions.get(0)).cars.add(lanes.get(this.lane).cars.remove(0));
+								this.lane = this.directions.remove(0);
 							}
-							this.lane = this.directions.remove(0);
+						} else {
+							if(this.ballX == lanes.get(directions.get(0)).x && this.ballY+this.ballHeight == lanes.get(directions.get(0)).y+lanes.get(directions.get(0)).distance) {
+								this.join = false;
+								if(my_square != null) {
+									my_square.number_cars--;
+								}
+								lanes.get(directions.get(0)).cars.add(lanes.get(this.lane).cars.remove(0));
+								this.lane = this.directions.remove(0);
+							}
 						}
 					}
 				}
-				
+
 				//for arriving and stopping
 			} else {
 				if (horizontal) {
@@ -130,53 +210,163 @@ public class Car {
 					}
 				}
 			}
+
 			this.ballX += this.ballXVel;
 			this.ballY += this.ballYVel;
 
-			if(horizontal) {
-				if (this.ballX + this.ballWidth == max && right_start) {
-					if (my_square.number_cars < 3) {
-						join = true;
-						my_square.number_cars++;
+			if(my_square != null) {
+				if(horizontal) {
+					if (this.ballX + this.ballWidth == max && right_start) {
+						if (my_square.number_cars < 3 && !my_square.rotate) {
+							join = true;
+							my_square.number_cars++;
+						}
+						else
+							this.ballXVel = 0;
 					}
-					else
-						this.ballXVel = 0;
-				}
-				if (this.ballX == min && !right_start) {
-					if (my_square.number_cars < 3) {
-						join = true;
-						my_square.number_cars++;
+					if (this.ballX == min && !right_start) {
+						if (my_square.number_cars < 3 && !my_square.rotate) {
+							join = true;
+							my_square.number_cars++;
+						}
+						else
+							this.ballXVel = 0;
 					}
-					else
-						this.ballXVel = 0;
-				}
-			} else {
-				if (this.ballY + this.ballHeight == max && right_start) {
-					if (my_square.number_cars < 3) {
-						join = true;
-						my_square.number_cars++;
+				} else {
+					if (this.ballY + this.ballHeight == max && right_start && !my_square.rotate) {
+						if (my_square.number_cars < 3 && !my_square.rotate) {
+							join = true;
+							my_square.number_cars++;
+						}
+						else
+							this.ballYVel = 0;
 					}
-					else
-						this.ballYVel = 0;
-				}
-				if (this.ballY == min && !right_start) {
-					if (my_square.number_cars < 3) {
-						join = true;
-						my_square.number_cars++;
+					if (this.ballY == min && !right_start && !my_square.rotate) {
+						if (my_square.number_cars < 3 && !my_square.rotate) {
+							join = true;
+							my_square.number_cars++;
+						}
+						else
+							this.ballYVel = 0;
 					}
-					else
-						this.ballYVel = 0;
 				}
 			}
 			if (join) {
-				boolean rotate = false;
-				int index = 0;
-				for(int j = 0; j< joins.size(); j++) {
-					if (joins.get(j).start == this.lane && joins.get(j).end == this.directions.get(0).intValue()) {
-						index = j;
-						if (joins.get(j).blocked_lanes.size() == 3)
-							rotate = true;
-						break;
+				if(rotate) {
+					my_square.rotate = true;
+					if(increase) {
+						if(horizontal) {
+							if(right_start) {
+								if(!this.rotated)
+									this.angle += 3;
+								if (this.angle == 90) {
+									rotated = true;
+									angle = 0;
+								}
+							} else {
+								if(!this.rotated)
+									this.angle -= 1.5;
+								if (this.angle == -90) {
+									rotated = true;
+									angle = 0;
+								}
+							}
+						} else {
+							if(right_start) {
+								if(!this.rotated)
+									this.angle -= 1.5;
+								if (this.angle == -90) {
+									rotated = true;
+									angle = 0;
+								}
+							} else {
+								if(!this.rotated)
+									this.angle += 3;
+								if (this.angle == 90) {
+									rotated = true;
+									angle = 0;
+								}
+							}
+						}
+					} else {
+						if(horizontal) {
+							if(right_start) {
+								if(!this.rotated)
+									this.angle -= 1.5;
+								if (this.angle == -90) {
+									rotated = true;
+									angle = 0;
+								}
+							} else {
+								if(!this.rotated)
+									this.angle += 3;
+								if (this.angle == 90) {
+									rotated = true;
+									angle = 0;
+								}
+							}
+						} else {
+							if(right_start) {
+								if(!this.rotated)
+									this.angle += 3;
+								if (this.angle == 90) {
+									rotated = true;
+									angle = 0;
+								}
+							} else {
+								if(!this.rotated)
+									this.angle -= 1.5;
+								if (this.angle == -90) {
+									rotated = true;
+									angle = 0;
+								}
+							}
+						}
+					}
+				}
+				if(horizontal) {
+					if(right_start) {
+						this.ballXVel = 1;
+						if (rotate) {
+							if (increase) {
+								this.ballYVel = 1;
+							}
+							else {
+								this.ballYVel = -1;
+							}
+						}
+					} else {
+						this.ballXVel = -1;
+						if (rotate) {
+							if (increase) {
+								this.ballYVel = 1;
+							}
+							else {
+								this.ballYVel = -1;
+							}
+						}
+					}
+				} else {
+					if(right_start) {
+						this.ballYVel = 1;
+						if (rotate) {
+							if (increase) {
+								this.ballXVel = 1;
+							}
+							else {
+								this.ballXVel = -1;
+							}
+						}
+					} else {
+						this.ballYVel = -1;
+						if (rotate) {
+							if (increase) {
+								this.ballXVel = 1;
+							}
+							else {
+								this.ballXVel = -1;
+							}
+						}
 					}
 				}
 				ArrayList<Integer> blocked_lanes = joins.get(index).blocked_lanes;
@@ -185,7 +375,6 @@ public class Car {
 						Car temp_car = lanes.get(blocked_lanes.get(k)).cars.get(0);
 						if (horizontal) {
 							if (right_start) {
-								this.ballXVel = 1;
 								if(this.blocked_car != null) {
 									if(this.ballX > this.blocked_car.ballX + this.blocked_car.ballWidth ) {
 										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
@@ -209,20 +398,27 @@ public class Car {
 								//bsa sa7 l fo2
 								if (this.ballWidth + this.ballX >= temp_car.ballX && this.ballY+this.ballHeight >= temp_car.ballY && this.ballY <= temp_car.ballY+temp_car.ballHeight && this.priority <= temp_car.priority) {
 									if (this.ballX <= temp_car.ballX + temp_car.ballWidth && this.ballWidth + this.ballX > temp_car.ballX) {
-										temp_car.ballYVel = 0;
+										temp_car.ballYVel = temp_car.ballXVel = 0;
 										this.blocked_car = temp_car;
 										break;
 									} else {
 										if (this.ballX < temp_car.ballX + temp_car.ballWidth) {
-											this.ballXVel = 0;
+											this.ballXVel = this.ballYVel = 0;
 											break;
 										}
 									}
 								} else {
 									this.ballXVel = 1;
+									if (rotate) {
+										if (increase) {
+											this.ballYVel = 1;
+										}
+										else {
+											this.ballYVel = -1;
+										}
+									}
 								}
 							} else {
-								this.ballXVel = -1;
 								if(this.blocked_car != null) {
 									if(this.ballX + this.ballWidth > this.blocked_car.ballX) {
 										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
@@ -245,22 +441,29 @@ public class Car {
 								//sa7 llely mn ta7t
 								if (this.ballX <= temp_car.ballX+temp_car.ballWidth && this.ballY+this.ballHeight >= temp_car.ballY && this.ballY <= temp_car.ballY+temp_car.ballHeight && this.priority <= temp_car.priority) {
 									if (this.ballX < temp_car.ballX+temp_car.ballWidth && this.ballX + this.ballWidth >= temp_car.ballX ) {
-										temp_car.ballYVel = 0;
+										temp_car.ballYVel = temp_car.ballXVel = 0;
 										this.blocked_car = temp_car;
 										break;
 									} else {
 										if (this.ballX + this.ballHeight > temp_car.ballX) {
-											this.ballXVel = 0;
+											this.ballXVel= this.ballYVel = 0;
 											break;
 										}
 									}
 								} else {
 									this.ballXVel = -1;
+									if (rotate) {
+										if (increase) {
+											this.ballYVel = 1;
+										}
+										else {
+											this.ballYVel = -1;
+										}
+									}
 								}
 							}
 						} else {
 							if (right_start) {
-								this.ballYVel = 1;
 								if(this.blocked_car != null) {
 									if(this.ballY < this.blocked_car.ballY + this.blocked_car.ballHeight ) {
 										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
@@ -282,20 +485,27 @@ public class Car {
 								}
 								if (this.ballHeight + this.ballY >= temp_car.ballY && this.ballX+this.ballWidth >= temp_car.ballX && this.ballX <= temp_car.ballX+temp_car.ballWidth && this.priority < temp_car.priority) {
 									if (this.ballHeight + this.ballY > temp_car.ballY && this.ballY <= temp_car.ballY + temp_car.ballHeight) {
-										temp_car.ballXVel = 0;
+										temp_car.ballXVel = temp_car.ballYVel = 0;
 										this.blocked_car = temp_car;
 										break;
 									} else {
 										if (this.ballY < temp_car.ballY+temp_car.ballHeight) {
-											this.ballYVel = 0;
+											this.ballYVel = this.ballXVel = 0;
 											break;
 										}
 									}
 								} else {
 									this.ballYVel = 1;
+									if (rotate) {
+										if (increase) {
+											this.ballXVel = 1;
+										}
+										else {
+											this.ballXVel = -1;
+										}
+									}
 								}
 							} else {
-								this.ballYVel = -1;
 								if(this.blocked_car != null) {
 									if(this.ballY + this.ballHeight > this.blocked_car.ballY ) {
 										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
@@ -317,17 +527,25 @@ public class Car {
 								}
 								if (this.ballY <= temp_car.ballY + temp_car.ballHeight && this.ballX+this.ballWidth >= temp_car.ballX && this.ballX <= temp_car.ballX+temp_car.ballWidth && this.priority < temp_car.priority) {
 									if (this.ballY < temp_car.ballY + temp_car.ballHeight && this.ballY + this.ballHeight >= temp_car.ballY) {
-										temp_car.ballXVel = 0;
+										temp_car.ballXVel = temp_car.ballYVel = 0;
 										this.blocked_car = temp_car;
 										break;
 									} else {
 										if(this.ballY+this.ballHeight > temp_car.ballY) {
-											this.ballYVel = 0;
+											this.ballYVel = this.ballXVel = 0;
 											break;
 										}
 									}
 								} else {
 									this.ballYVel = -1;
+									if (rotate) {
+										if (increase) {
+											this.ballXVel = 1;
+										}
+										else {
+											this.ballXVel = -1;
+										}
+									}
 								}
 							}
 						}
@@ -489,12 +707,20 @@ public class Car {
 		this.blocked_car = blocked_car;
 	}
 
-	public int getAngle() {
+	public double getAngle() {
 		return angle;
 	}
 
-	public void setAngle(int angle) {
+	public void setAngle(double angle) {
 		this.angle = angle;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
 	}
 
 }
