@@ -46,9 +46,13 @@ public class Car {
 		return new Color(0, randomNumber.nextFloat(), randomNumber.nextFloat());
 	}
 
-	public void update2(int min, int max, boolean horizontal, boolean right_start,
+	public void update2(int min, int max,
 			ArrayList<Lane> lanes, ArrayList<Join> joins, ArrayList<Square> squares) {
-		System.out.println(this.lane+" "+this.directions);
+		System.out.println(this.lane+" x: "+this.ballXVel+" y: "+this.ballYVel);
+		//if(this.ballXVel != 0.0 || this.ballYVel != 0.0)
+			//System.out.println(this.lane+" "+ right_start+" "+ horizontal);
+		boolean horizontal = lanes.get(this.lane).horizontal;
+		boolean right_start = lanes.get(this.lane).right_start;
 		if(arrived) {
 
 		} else {
@@ -238,8 +242,6 @@ public class Car {
 
 			if(my_square != null) {
 				int emergency = my_square.emergency_lane(lanes);
-				//if(this.lane == 0 || this.lane == 2 || this.lane == 4 || this.lane == 6)
-				//System.out.println(emergency);
 				if(horizontal) {
 					if (this.ballX + this.ballWidth == max && right_start) {
 						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane)) {
@@ -445,8 +447,10 @@ public class Car {
 									}
 								} else {
 									this.ballXVel = 1;
+									System.out.println(this.lane+" 3ady");
 									if (rotate) {
 										if (increase) {
+											System.out.println(this.lane+" byzid");
 											this.ballYVel = 1;
 										}
 										else {

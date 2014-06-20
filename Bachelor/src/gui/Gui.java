@@ -197,15 +197,15 @@ public class Gui extends JFrame implements ActionListener
 				for (int k=0; k < lanes.get(i).getCars().size(); k++) {
 					if (lanes.get(i).isHorizontal()) {
 						if (lanes.get(i).isRight_start()) {
-							lanes.get(i).getCars().get(k).update2(lanes.get(i).getX(), lanes.get(i).getX()+lanes.get(i).getDistance(), true, true, main.getLanes(), main.getJoins(), main.getSquares());
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getX(), lanes.get(i).getX()+lanes.get(i).getDistance(), main.getLanes(), main.getJoins(), main.getSquares());
 						} else {
-							lanes.get(i).getCars().get(k).update2(lanes.get(i).getX(), lanes.get(i).getX()+lanes.get(i).getDistance(), true, false, main.getLanes(), main.getJoins(), main.getSquares());
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getX(), lanes.get(i).getX()+lanes.get(i).getDistance(), main.getLanes(), main.getJoins(), main.getSquares());
 						}
 					} else {
 						if (lanes.get(i).isRight_start()) {
-							lanes.get(i).getCars().get(k).update2(lanes.get(i).getY(), lanes.get(i).getY()+lanes.get(i).getDistance(), false, true, main.getLanes(), main.getJoins(), main.getSquares());
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getY(), lanes.get(i).getY()+lanes.get(i).getDistance(), main.getLanes(), main.getJoins(), main.getSquares());
 						} else {
-							lanes.get(i).getCars().get(k).update2(lanes.get(i).getY(), lanes.get(i).getY()+lanes.get(i).getDistance(), false, false, main.getLanes(), main.getJoins(), main.getSquares());
+							lanes.get(i).getCars().get(k).update2(lanes.get(i).getY(), lanes.get(i).getY()+lanes.get(i).getDistance(), main.getLanes(), main.getJoins(), main.getSquares());
 						}
 					}
 				}
