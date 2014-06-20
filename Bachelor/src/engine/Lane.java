@@ -53,6 +53,22 @@ public class Lane {
 			this.emergency = true;
 	}
 	
+	public Car removeCar() {
+		boolean flag = false;
+		if (cars.get(0).emergency) {
+			for (int i = 1; i < cars.size(); i++) {
+				if (cars.get(i).emergency) {
+					flag = true;
+					break;
+				}
+			}
+			if (!flag) {
+				this.emergency = false;
+			}
+		}
+		return cars.remove(0);
+	}
+	
 	public void updateEnds(int x, int y) {
 		this.endX -= x;
 		this.endY -= y;

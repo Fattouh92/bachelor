@@ -6,6 +6,7 @@ import engine.Lane;
 import engine.Main;
 import engine.Car;
 import engine.Join;
+import engine.Square;
 
 import java.awt.*;
 import java.awt.event.*;
