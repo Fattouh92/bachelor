@@ -42,9 +42,11 @@ public class Main {
 		try {
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split("\\s");
-				ArrayList<Integer> Temp = new ArrayList<Integer>();
-				for (int c = 5; c < parts.length; c++) {
-					Temp.add(new Integer(Integer.parseInt(parts[c])));
+				ArrayList<Integer[]> Temp = new ArrayList<Integer[]>();
+				for (int c = 5; c < parts.length; c = c+2) {
+					Integer[] temp_integer = {new Integer(Integer.parseInt(parts[c])),new Integer(Integer.parseInt(parts[c+1]))};
+					//Temp.add(new Integer(Integer.parseInt(parts[c])));
+					Temp.add(temp_integer);
 				}
 				joins.add(new Join(Temp, Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
 						Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4])));
@@ -116,6 +118,14 @@ public class Main {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		/*for (int i = 0; i < joins.size(); i++) {
+			ArrayList<Integer[]> bl = joins.get(i).blocked_lanes;
+			for (int j = 0; j < bl.size(); j++) {
+				System.out.print(bl.get(j)[0] + " " + bl.get(j)[1] + ", ");
+			}
+			System.out.println();
+		}*/
 	}
 
 	public boolean over() {

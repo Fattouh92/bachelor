@@ -14,6 +14,7 @@ public class Square {
 	public int emergency_lane(ArrayList<Lane> lanes) {
 		for (int i = 0; i < lanes.size(); i++) {
 			if (lanes.get(i).emergency && this.lanes.contains(new Integer(lanes.get(i).number))) {
+				System.out.println(i);
 				return i;
 			}
 		}

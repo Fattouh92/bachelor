@@ -3,7 +3,7 @@ package engine;
 import java.util.ArrayList;
 
 public class Join {
-	ArrayList<Integer> blocked_lanes;
+	ArrayList<Integer[]> blocked_lanes;
 	int start;
 	int end;
 	int duration;
@@ -11,7 +11,7 @@ public class Join {
 	boolean rotate;
 	boolean increase;
 	
-	public Join(ArrayList<Integer> blocked_lanes, int start, int end, int rotate, int increase, int duration) {
+	public Join(ArrayList<Integer[]> blocked_lanes, int start, int end, int rotate, int increase, int duration) {
 		super();
 		this.blocked_lanes = blocked_lanes;
 		this.start = start;
@@ -29,20 +29,20 @@ public class Join {
 		}
 	}
 	
-	public boolean canPass(int lane) {
+	/*public boolean canPass(int lane) {
 		for(int i = 0; i<this.blocked_lanes.size(); i++) {
-			if (lane == this.blocked_lanes.get(i).intValue()) {
+			if (lane == this.blocked_lanes.get(i)[0].intValue()) {
 				return false;
 			}
 		}
 		return true;
-	}
+	}*/
 
-	public ArrayList<Integer> getBlocked_lanes() {
+	public ArrayList<Integer[]> getBlocked_lanes() {
 		return blocked_lanes;
 	}
 
-	public void setBlocked_lanes(ArrayList<Integer> blocked_lanes) {
+	public void setBlocked_lanes(ArrayList<Integer[]> blocked_lanes) {
 		this.blocked_lanes = blocked_lanes;
 	}
 

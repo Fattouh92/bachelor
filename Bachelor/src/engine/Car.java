@@ -200,7 +200,6 @@ public class Car {
 
 				//for arriving and stopping
 			} else {
-				System.out.println("a7a bgad");
 				if (horizontal) {
 					if (right_start) {
 						if (this.ballX + this.ballWidth == lanes.get(this.lane).endX && this.ballY == lanes.get(this.lane).endY) {
@@ -217,9 +216,7 @@ public class Car {
 					}
 				} else {
 					if (right_start) {
-						System.out.println("o7a");
 						if (this.ballX == lanes.get(this.lane).endX && this.ballY + this.ballHeight  == lanes.get(this.lane).endY) {
-							System.out.println("o7a2");
 							this.ballXVel = this.ballYVel = 0;
 							this.arrived = true;
 							lanes.get(this.lane).updateEnds(0, this.ballHeight);
@@ -240,6 +237,7 @@ public class Car {
 			if(my_square != null) {
 				int emergency = my_square.emergency_lane(lanes);
 				Join emergency_join = null;
+				boolean emergency_flag = false;
 				if (emergency != -1) {
 					for(int q = 0; q< joins.size(); q++) {
 						if (joins.get(q).start == emergency && joins.get(q).end == lanes.get(emergency).emergency_car()) {
@@ -247,10 +245,16 @@ public class Car {
 							break;
 						}
 					}
+					if (emergency_join != null) {
+						for (int g = 0; g < emergency_join.blocked_lanes.size(); g++) {
+							if (this.lane == emergency_join.blocked_lanes.get(g)[0].intValue() && this.directions.get(0) == emergency_join.blocked_lanes.get(g)[1].intValue())
+								emergency_flag = true;
+						}	
+					}
 				}
 				if(horizontal) {
 					if (this.ballX + this.ballWidth == max && right_start) {
-						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane || !emergency_join.blocked_lanes.contains(new Integer(this.lane)))) {
+						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane || !emergency_flag)) {
 							join = true;
 							my_square.number_cars++;
 						}
@@ -258,7 +262,7 @@ public class Car {
 							this.ballXVel = 0;
 					}
 					if (this.ballX == min && !right_start) {
-						if (my_square.number_cars < 3  && (emergency == -1 || emergency == this.lane || !emergency_join.blocked_lanes.contains(new Integer(this.lane)))) {
+						if (my_square.number_cars < 3  && (emergency == -1 || emergency == this.lane || !emergency_flag)) {
 							join = true;
 							my_square.number_cars++;
 						}
@@ -267,7 +271,7 @@ public class Car {
 					}
 				} else {
 					if (this.ballY + this.ballHeight == max && right_start ) {
-						if (my_square.number_cars < 3  && (emergency == -1 || emergency == this.lane || !emergency_join.blocked_lanes.contains(new Integer(this.lane)))) {
+						if (my_square.number_cars < 3  && (emergency == -1 || emergency == this.lane || !emergency_flag)) {
 							join = true;
 							my_square.number_cars++;
 						}
@@ -275,7 +279,7 @@ public class Car {
 							this.ballYVel = 0;
 					}
 					if (this.ballY == min && !right_start) {
-						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane || !emergency_join.blocked_lanes.contains(new Integer(this.lane)))) {
+						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane || !emergency_flag)) {
 							join = true;
 							my_square.number_cars++;
 						}
@@ -410,201 +414,199 @@ public class Car {
 						}
 					}
 				}
-				ArrayList<Integer> blocked_lanes = joins.get(index).blocked_lanes;
+				ArrayList<Integer[]> blocked_lanes = joins.get(index).blocked_lanes;
 				for(int k = 0; k < blocked_lanes.size(); k++) {
-					if (!lanes.get(blocked_lanes.get(k)).cars.isEmpty()) {
-						Car temp_car = lanes.get(blocked_lanes.get(k)).cars.get(0);
-						//if (temp_car.rotate && !this.emergency && this.join) {
+					if (!lanes.get(blocked_lanes.get(k)[0]).cars.isEmpty()) {
+						Car temp_car = lanes.get(blocked_lanes.get(k)[0]).cars.get(0);
+						if (temp_car.directions.get(0) == blocked_lanes.get(k)[1].intValue()) {
+							//if (temp_car.rotate && !this.emergency && this.join) {
 							//this.ballXVel = this.ballYVel = 0;
-						//}
-						if (horizontal) {
-							if (right_start) {
-								if(this.blocked_car != null) {
-									if(this.ballX > this.blocked_car.ballX + this.blocked_car.ballWidth ) {
-										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
-										lanes.get(this.blocked_car.lane).cars.get(0).stop_rotate = false;
-										if (temp_blocked_lane.horizontal) {
-											if (temp_blocked_lane.right_start) {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
-											}else {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
-											}
-										} else {
-											if (temp_blocked_lane.right_start) {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
+							//}
+							if (horizontal) {
+								if (right_start) {
+									if(this.blocked_car != null) {
+										if(this.ballX > this.blocked_car.ballX + this.blocked_car.ballWidth ) {
+											Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
+											lanes.get(this.blocked_car.lane).cars.get(0).stop_rotate = false;
+											if (temp_blocked_lane.horizontal) {
+												if (temp_blocked_lane.right_start) {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
+												}else {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
+												}
 											} else {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
+												if (temp_blocked_lane.right_start) {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
+												} else {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
+												}
 											}
 										}
+										this.blocked_car = null;
 									}
-									this.blocked_car = null;
-								}
-								//gayalha mn ta7t aw fo2
-								//bsa sa7 l fo2
-								if (!this.emergency && this.ballWidth + this.ballX >= temp_car.ballX && this.ballY+this.ballHeight >= temp_car.ballY && this.ballY <= temp_car.ballY+temp_car.ballHeight && this.priority <= temp_car.priority) {
-									if (this.ballX <= temp_car.ballX + temp_car.ballWidth && this.ballWidth + this.ballX > temp_car.ballX) {
-										temp_car.ballYVel = temp_car.ballXVel = 0;
-										temp_car.stop_rotate = true;
-										this.blocked_car = temp_car;
-										break;
-									} else {
-										if (this.ballX < temp_car.ballX + temp_car.ballWidth) {
-											this.ballXVel = this.ballYVel = 0;
+									//gayalha mn ta7t aw fo2
+									//bsa sa7 l fo2
+									if (!this.emergency && this.ballWidth + this.ballX >= temp_car.ballX && this.ballY+this.ballHeight >= temp_car.ballY && this.ballY <= temp_car.ballY+temp_car.ballHeight && this.priority <= temp_car.priority) {
+										if (this.ballX <= temp_car.ballX + temp_car.ballWidth && this.ballWidth + this.ballX > temp_car.ballX) {
+											temp_car.ballYVel = temp_car.ballXVel = 0;
+											temp_car.stop_rotate = true;
+											this.blocked_car = temp_car;
 											break;
+										} else {
+											if (this.ballX < temp_car.ballX + temp_car.ballWidth) {
+												this.ballXVel = this.ballYVel = 0;
+												break;
+											}
+										}
+									} else {
+										this.ballXVel = 1;
+										if (rotate) {
+											if (increase) {
+												this.ballYVel = 1;
+											}
+											else {
+												this.ballYVel = -1;
+											}
 										}
 									}
 								} else {
-									this.ballXVel = 1;
-									System.out.println(this.lane+" 3ady");
-									if (rotate) {
-										if (increase) {
-											System.out.println(this.lane+" byzid");
-											this.ballYVel = 1;
+									if(this.blocked_car != null) {
+										if(this.ballX + this.ballWidth < this.blocked_car.ballX) {
+											Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
+											lanes.get(this.blocked_car.lane).cars.get(0).stop_rotate = false;
+											if (temp_blocked_lane.horizontal) {
+												if (temp_blocked_lane.right_start) {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
+												}else {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
+												}
+											} else {
+												if (temp_blocked_lane.right_start) {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
+												} else {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
+												}
+											}
 										}
-										else {
-											this.ballYVel = -1;
+										this.blocked_car = null;
+									}
+									//sa7 llely mn ta7t
+									if (!this.emergency && this.ballX <= temp_car.ballX+temp_car.ballWidth && this.ballY+this.ballHeight >= temp_car.ballY && this.ballY <= temp_car.ballY+temp_car.ballHeight && this.priority <= temp_car.priority) {
+										if (this.ballX < temp_car.ballX+temp_car.ballWidth && this.ballX + this.ballWidth >= temp_car.ballX ) {
+											temp_car.ballYVel = temp_car.ballXVel = 0;
+											temp_car.stop_rotate = true;
+											this.blocked_car = temp_car;
+											break;
+										} else {
+											if (this.ballX + this.ballHeight > temp_car.ballX) {
+												this.ballXVel= this.ballYVel = 0;
+												break;
+											}
+										}
+									} else {
+										this.ballXVel = -1;
+										if (rotate) {
+											if (increase) {
+												this.ballYVel = 1;
+											}
+											else {
+												this.ballYVel = -1;
+											}
 										}
 									}
 								}
 							} else {
-								if(this.blocked_car != null) {
-									if(this.ballX + this.ballWidth < this.blocked_car.ballX) {
-										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
-										lanes.get(this.blocked_car.lane).cars.get(0).stop_rotate = false;
-										if (temp_blocked_lane.horizontal) {
-											if (temp_blocked_lane.right_start) {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
-											}else {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
-											}
-										} else {
-											if (temp_blocked_lane.right_start) {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
+								if (right_start) {
+									if(this.blocked_car != null) {
+										if(this.ballY < this.blocked_car.ballY + this.blocked_car.ballHeight ) {
+											Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
+											lanes.get(this.blocked_car.lane).cars.get(0).stop_rotate = false;
+											if (temp_blocked_lane.horizontal) {
+												if (temp_blocked_lane.right_start) {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
+												}else {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
+												}
 											} else {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
+												if (temp_blocked_lane.right_start) {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
+												} else {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
+												}
 											}
 										}
+										this.blocked_car = null;
 									}
-									this.blocked_car = null;
-								}
-								//sa7 llely mn ta7t
-								if (!this.emergency && this.ballX <= temp_car.ballX+temp_car.ballWidth && this.ballY+this.ballHeight >= temp_car.ballY && this.ballY <= temp_car.ballY+temp_car.ballHeight && this.priority <= temp_car.priority) {
-									if (this.ballX < temp_car.ballX+temp_car.ballWidth && this.ballX + this.ballWidth >= temp_car.ballX ) {
-										temp_car.ballYVel = temp_car.ballXVel = 0;
-										temp_car.stop_rotate = true;
-										this.blocked_car = temp_car;
-										System.out.println(this.lane+" "+ temp_car.lane);
-										break;
-									} else {
-										if (this.ballX + this.ballHeight > temp_car.ballX) {
-											this.ballXVel= this.ballYVel = 0;
+									if (!this.emergency && this.ballHeight + this.ballY >= temp_car.ballY && this.ballX+this.ballWidth >= temp_car.ballX && this.ballX <= temp_car.ballX+temp_car.ballWidth && this.priority < temp_car.priority) {
+										if (this.ballHeight + this.ballY > temp_car.ballY && this.ballY <= temp_car.ballY + temp_car.ballHeight && !temp_car.emergency) {
+											temp_car.ballXVel = temp_car.ballYVel = 0;
+											temp_car.stop_rotate = true;
+											this.blocked_car = temp_car;
 											break;
+										} else {
+											if (this.ballY < temp_car.ballY+temp_car.ballHeight) {
+												this.ballYVel = this.ballXVel = 0;
+												break;
+											}
+										}
+									} else {
+										this.ballYVel = 1;
+										if (rotate) {
+											if (increase) {
+												this.ballXVel = 1;
+											}
+											else {
+												this.ballXVel = -1;
+											}
 										}
 									}
 								} else {
-									this.ballXVel = -1;
-									if (rotate) {
-										if (increase) {
-											this.ballYVel = 1;
-										}
-										else {
-											this.ballYVel = -1;
-										}
-									}
-								}
-							}
-						} else {
-							if (right_start) {
-								if(this.blocked_car != null) {
-									if(this.ballY < this.blocked_car.ballY + this.blocked_car.ballHeight ) {
-										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
-										lanes.get(this.blocked_car.lane).cars.get(0).stop_rotate = false;
-										if (temp_blocked_lane.horizontal) {
-											if (temp_blocked_lane.right_start) {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
-											}else {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
-											}
-										} else {
-											if (temp_blocked_lane.right_start) {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
+									if(this.blocked_car != null) {
+										if(this.ballY + this.ballHeight > this.blocked_car.ballY ) {
+											Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
+											lanes.get(this.blocked_car.lane).cars.get(0).stop_rotate = false;
+											if (temp_blocked_lane.horizontal) {
+												if (temp_blocked_lane.right_start) {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
+												}else {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
+												}
 											} else {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
+												if (temp_blocked_lane.right_start) {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
+												} else {
+													lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
+												}
 											}
 										}
+										this.blocked_car = null;
 									}
-									this.blocked_car = null;
-								}
-								if (!this.emergency && this.ballHeight + this.ballY >= temp_car.ballY && this.ballX+this.ballWidth >= temp_car.ballX && this.ballX <= temp_car.ballX+temp_car.ballWidth && this.priority < temp_car.priority) {
-									if (this.ballHeight + this.ballY > temp_car.ballY && this.ballY <= temp_car.ballY + temp_car.ballHeight && !temp_car.emergency) {
-										temp_car.ballXVel = temp_car.ballYVel = 0;
-										temp_car.stop_rotate = true;
-										this.blocked_car = temp_car;
-										break;
-									} else {
-										if (this.ballY < temp_car.ballY+temp_car.ballHeight) {
-											this.ballYVel = this.ballXVel = 0;
+									if (!this.emergency && this.ballY <= temp_car.ballY + temp_car.ballHeight && this.ballX+this.ballWidth >= temp_car.ballX && this.ballX <= temp_car.ballX+temp_car.ballWidth && this.priority < temp_car.priority) {
+										if (this.ballY < temp_car.ballY + temp_car.ballHeight && this.ballY + this.ballHeight >= temp_car.ballY) {
+											temp_car.ballXVel = temp_car.ballYVel = 0;
+											temp_car.stop_rotate = true;
+											this.blocked_car = temp_car;
 											break;
-										}
-									}
-								} else {
-									this.ballYVel = 1;
-									if (rotate) {
-										if (increase) {
-											this.ballXVel = 1;
-										}
-										else {
-											this.ballXVel = -1;
-										}
-									}
-								}
-							} else {
-								if(this.blocked_car != null) {
-									if(this.ballY + this.ballHeight > this.blocked_car.ballY ) {
-										Lane temp_blocked_lane = lanes.get(this.blocked_car.lane);
-										lanes.get(this.blocked_car.lane).cars.get(0).stop_rotate = false;
-										if (temp_blocked_lane.horizontal) {
-											if (temp_blocked_lane.right_start) {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = 1;
-											}else {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballXVel = -1;
-											}
 										} else {
-											if (temp_blocked_lane.right_start) {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = 1;
-											} else {
-												lanes.get(this.blocked_car.lane).cars.get(0).ballYVel = -1;
+											if(this.ballY+this.ballHeight > temp_car.ballY) {
+												this.ballYVel = this.ballXVel = 0;
+												break;
 											}
 										}
-									}
-									this.blocked_car = null;
-								}
-								if (!this.emergency && this.ballY <= temp_car.ballY + temp_car.ballHeight && this.ballX+this.ballWidth >= temp_car.ballX && this.ballX <= temp_car.ballX+temp_car.ballWidth && this.priority < temp_car.priority) {
-									if (this.ballY < temp_car.ballY + temp_car.ballHeight && this.ballY + this.ballHeight >= temp_car.ballY) {
-										temp_car.ballXVel = temp_car.ballYVel = 0;
-										temp_car.stop_rotate = true;
-										this.blocked_car = temp_car;
-										break;
 									} else {
-										if(this.ballY+this.ballHeight > temp_car.ballY) {
-											this.ballYVel = this.ballXVel = 0;
-											break;
-										}
-									}
-								} else {
-									this.ballYVel = -1;
-									if (rotate) {
-										if (increase) {
-											this.ballXVel = 1;
-										}
-										else {
-											this.ballXVel = -1;
+										this.ballYVel = -1;
+										if (rotate) {
+											if (increase) {
+												this.ballXVel = 1;
+											}
+											else {
+												this.ballXVel = -1;
+											}
 										}
 									}
 								}
 							}
 						}
-
 					}
 				}
 			}
