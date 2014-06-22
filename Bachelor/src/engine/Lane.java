@@ -47,6 +47,15 @@ public class Lane {
 		}
 	}
 	
+	public int emergency_car() {
+		for(int i = 0; i<cars.size(); i++) {
+			if (cars.get(i).emergency) {
+				return cars.get(i).directions.get(0).intValue();
+			}
+		}
+		return -1;
+	}
+	
 	public void addCar(Car car) {
 		cars.add(car);
 		if (car.emergency)

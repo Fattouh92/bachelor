@@ -118,6 +118,18 @@ public class Main {
 		}
 	}
 
+	public boolean over() {
+		for(int i = 0; i< lanes.size(); i++) {
+			Lane lane = lanes.get(i);
+			for (int j = 0; j < lane.cars.size(); j++) {
+				if(lane.cars.get(j).ballXVel != 0 || lane.cars.get(j).ballYVel != 0) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
 	public ArrayList<Lane> getLanes() {
 		return lanes;
 	}

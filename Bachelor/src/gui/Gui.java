@@ -147,6 +147,10 @@ public class Gui extends JFrame implements ActionListener
 					now = System.nanoTime();
 				}
 			}
+			if (main.over()) {
+				paused = true;
+				startButton.setText("Finished!!");
+			}
 		}
 	}
 
@@ -257,7 +261,11 @@ public class Gui extends JFrame implements ActionListener
 					int drawY = (int) ((lanes.get(c).getCars().get(i).getBallY() - lanes.get(c).getCars().get(i).getLastBallY()) * interpolation + lanes.get(c).getCars().get(i).getLastBallY());
 					AffineTransform old = g2d.getTransform();
 					g2d.rotate(Math.toRadians(lanes.get(c).getCars().get(i).getAngle()),lanes.get(c).getCars().get(i).getBallX()+lanes.get(c).getCars().get(i).getBallWidth()/2,lanes.get(c).getCars().get(i).getBallY()+lanes.get(c).getCars().get(i).getBallHeight()/2);
-					g2d.setColor(Color.RED);
+					if(lanes.get(c).getCars().get(i).isEmergency()) {
+						g2d.setColor(Color.RED);
+					} else {
+						g2d.setColor(Color.BLUE);
+					}
 					g.fillRect(drawX, drawY, lanes.get(c).getCars().get(i).getBallWidth(), lanes.get(c).getCars().get(i).getBallHeight());
 					g2d.setTransform(old);
 

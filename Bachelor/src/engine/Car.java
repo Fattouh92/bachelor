@@ -43,14 +43,11 @@ public class Car {
 	private Random randomNumber = new Random();
 
 	private Color getRandomColor() {
-		return new Color(0, randomNumber.nextFloat(), randomNumber.nextFloat());
+		return new Color(randomNumber.nextFloat(), randomNumber.nextFloat(), randomNumber.nextFloat());
 	}
 
 	public void update2(int min, int max,
 			ArrayList<Lane> lanes, ArrayList<Join> joins, ArrayList<Square> squares) {
-		System.out.println(this.lane+" x: "+this.ballXVel+" y: "+this.ballYVel);
-		//if(this.ballXVel != 0.0 || this.ballYVel != 0.0)
-			//System.out.println(this.lane+" "+ right_start+" "+ horizontal);
 		boolean horizontal = lanes.get(this.lane).horizontal;
 		boolean right_start = lanes.get(this.lane).right_start;
 		if(arrived) {
@@ -242,9 +239,18 @@ public class Car {
 
 			if(my_square != null) {
 				int emergency = my_square.emergency_lane(lanes);
+				Join emergency_join = null;
+				if (emergency != -1) {
+					for(int q = 0; q< joins.size(); q++) {
+						if (joins.get(q).start == emergency && joins.get(q).end == lanes.get(emergency).emergency_car()) {
+							emergency_join = joins.get(q);
+							break;
+						}
+					}
+				}
 				if(horizontal) {
 					if (this.ballX + this.ballWidth == max && right_start) {
-						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane)) {
+						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane || !emergency_join.blocked_lanes.contains(new Integer(this.lane)))) {
 							join = true;
 							my_square.number_cars++;
 						}
@@ -252,7 +258,7 @@ public class Car {
 							this.ballXVel = 0;
 					}
 					if (this.ballX == min && !right_start) {
-						if (my_square.number_cars < 3  && (emergency == -1 || emergency == this.lane)) {
+						if (my_square.number_cars < 3  && (emergency == -1 || emergency == this.lane || !emergency_join.blocked_lanes.contains(new Integer(this.lane)))) {
 							join = true;
 							my_square.number_cars++;
 						}
@@ -261,7 +267,7 @@ public class Car {
 					}
 				} else {
 					if (this.ballY + this.ballHeight == max && right_start ) {
-						if (my_square.number_cars < 3  && (emergency == -1 || emergency == this.lane)) {
+						if (my_square.number_cars < 3  && (emergency == -1 || emergency == this.lane || !emergency_join.blocked_lanes.contains(new Integer(this.lane)))) {
 							join = true;
 							my_square.number_cars++;
 						}
@@ -269,7 +275,7 @@ public class Car {
 							this.ballYVel = 0;
 					}
 					if (this.ballY == min && !right_start) {
-						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane)) {
+						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane || !emergency_join.blocked_lanes.contains(new Integer(this.lane)))) {
 							join = true;
 							my_square.number_cars++;
 						}
@@ -364,7 +370,6 @@ public class Car {
 						this.ballXVel = 1;
 						if (rotate) {
 							if (increase) {
-								System.out.println("omar");
 								this.ballYVel = 1;
 							}
 							else {
@@ -409,6 +414,9 @@ public class Car {
 				for(int k = 0; k < blocked_lanes.size(); k++) {
 					if (!lanes.get(blocked_lanes.get(k)).cars.isEmpty()) {
 						Car temp_car = lanes.get(blocked_lanes.get(k)).cars.get(0);
+						//if (temp_car.rotate && !this.emergency && this.join) {
+							//this.ballXVel = this.ballYVel = 0;
+						//}
 						if (horizontal) {
 							if (right_start) {
 								if(this.blocked_car != null) {
@@ -596,6 +604,7 @@ public class Car {
 								}
 							}
 						}
+
 					}
 				}
 			}
