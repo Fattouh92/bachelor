@@ -109,7 +109,7 @@ public class Car {
 								this.join = false;
 								if(my_square != null) {
 									my_square.number_cars--;
-									//my_square.rotate = false;
+									my_square.rotate_lane = -1;
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar());
 								this.lane = this.directions.remove(0);
@@ -121,7 +121,7 @@ public class Car {
 								this.join = false;
 								if(my_square != null) {
 									my_square.number_cars--;
-									//my_square.rotate = false;
+									my_square.rotate_lane = -1;
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar());
 								this.lane = this.directions.remove(0);
@@ -135,7 +135,7 @@ public class Car {
 								this.join = false;
 								if(my_square != null) {
 									my_square.number_cars--;
-									//my_square.rotate = false;
+									my_square.rotate_lane = -1;
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar());
 								this.lane = this.directions.remove(0);
@@ -147,7 +147,7 @@ public class Car {
 								this.join = false;
 								if(my_square != null) {
 									my_square.number_cars--;
-									//my_square.rotate = false;
+									my_square.rotate_lane = -1;
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar());
 								this.lane = this.directions.remove(0);
@@ -161,6 +161,7 @@ public class Car {
 								this.join = false;
 								if(my_square != null) {
 									my_square.number_cars--;
+									my_square.rotate_lane = -1;
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar());
 								this.lane = this.directions.remove(0);
@@ -170,6 +171,7 @@ public class Car {
 								this.join = false;
 								if(my_square != null) {
 									my_square.number_cars--;
+									my_square.rotate_lane = -1;
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar());
 								this.lane = this.directions.remove(0);
@@ -181,6 +183,7 @@ public class Car {
 								this.join = false;
 								if(my_square != null) {
 									my_square.number_cars--;
+									my_square.rotate_lane = -1;
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar());
 								this.lane = this.directions.remove(0);
@@ -190,6 +193,7 @@ public class Car {
 								this.join = false;
 								if(my_square != null) {
 									my_square.number_cars--;
+									my_square.rotate_lane = -1;
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar());
 								this.lane = this.directions.remove(0);
@@ -197,7 +201,7 @@ public class Car {
 						}
 					}
 				}
-
+				System.out.println(my_square.rotate_lane+ " " +this.lane);
 				//for arriving and stopping
 			} else {
 				if (horizontal) {
@@ -235,9 +239,13 @@ public class Car {
 			this.ballY += this.ballYVel;
 
 			if(my_square != null) {
+				if (rotate && joins.get(index).duration == 3 && my_square.lanes.contains(new Integer(this.lane)) && my_square.rotate_lane == -1)
+					my_square.rotate_lane = this.lane;
 				int emergency = my_square.emergency_lane(lanes);
+				int rotate_lane = my_square.rotate_lane;
 				Join emergency_join = null;
 				boolean emergency_flag = false;
+				boolean rotate_flag = false;
 				if (emergency != -1) {
 					for(int q = 0; q< joins.size(); q++) {
 						if (joins.get(q).start == emergency && joins.get(q).end == lanes.get(emergency).emergency_car()) {
@@ -252,18 +260,22 @@ public class Car {
 						}	
 					}
 				}
+				if (rotate_lane != -1) {
+					for (int g = 0; g < joins.get(index).blocked_lanes.size(); g++) {
+						if (this.lane == joins.get(index).blocked_lanes.get(g)[0].intValue() && this.directions.get(0) == joins.get(index).blocked_lanes.get(g)[1].intValue())
+							rotate_flag = true;
+					}
+				}
 				if(horizontal) {
 					if (this.ballX + this.ballWidth == max && right_start) {
-						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane || !emergency_flag)) {
-							join = true;
+						if ((!emergency_flag && emergency != -1) || (emergency == this.lane)||(emergency == -1 && my_square.rotate_lane == this.lane)||(emergency == -1 && my_square.rotate_lane == -1 && my_square.number_cars < 3)) {							join = true;
 							my_square.number_cars++;
 						}
 						else
 							this.ballXVel = 0;
 					}
 					if (this.ballX == min && !right_start) {
-						if (my_square.number_cars < 3  && (emergency == -1 || emergency == this.lane || !emergency_flag)) {
-							join = true;
+						if ((!emergency_flag && emergency != -1) || (emergency == this.lane)||(emergency == -1 && my_square.rotate_lane == this.lane)||(emergency == -1 && my_square.rotate_lane == -1 && my_square.number_cars < 3)){							join = true;
 							my_square.number_cars++;
 						}
 						else
@@ -271,16 +283,14 @@ public class Car {
 					}
 				} else {
 					if (this.ballY + this.ballHeight == max && right_start ) {
-						if (my_square.number_cars < 3  && (emergency == -1 || emergency == this.lane || !emergency_flag)) {
-							join = true;
+						if ((!emergency_flag && emergency != -1) || (emergency == this.lane)||(emergency == -1 && my_square.rotate_lane == this.lane)||(emergency == -1 && my_square.rotate_lane == -1 && my_square.number_cars < 3)){							join = true;
 							my_square.number_cars++;
 						}
 						else
 							this.ballYVel = 0;
 					}
 					if (this.ballY == min && !right_start) {
-						if (my_square.number_cars < 3 && (emergency == -1 || emergency == this.lane || !emergency_flag)) {
-							join = true;
+						if ((!emergency_flag && emergency != -1) || (emergency == this.lane)||(emergency == -1 && my_square.rotate_lane == this.lane)||(emergency == -1 && my_square.rotate_lane == -1 && my_square.number_cars < 3)){							join = true;
 							my_square.number_cars++;
 						}
 						else
@@ -422,6 +432,7 @@ public class Car {
 							//if (temp_car.rotate && !this.emergency && this.join) {
 							//this.ballXVel = this.ballYVel = 0;
 							//}
+
 							if (horizontal) {
 								if (right_start) {
 									if(this.blocked_car != null) {
@@ -606,6 +617,7 @@ public class Car {
 									}
 								}
 							}
+
 						}
 					}
 				}
