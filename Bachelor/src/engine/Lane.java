@@ -65,8 +65,8 @@ public class Lane {
 	public Car removeCar(Car c) {
 		boolean flag = false;
 		if (cars.get(cars.indexOf(c)).emergency) {
-			for (int i = 1; i < cars.size(); i++) {
-				if (cars.get(i).emergency) {
+			for (int i = 0; i < cars.size(); i++) {
+				if (cars.get(i).emergency && !cars.get(i).equals(c)) {
 					flag = true;
 					break;
 				}
