@@ -62,9 +62,9 @@ public class Lane {
 			this.emergency = true;
 	}
 	
-	public Car removeCar() {
+	public Car removeCar(Car c) {
 		boolean flag = false;
-		if (cars.get(0).emergency) {
+		if (cars.get(cars.indexOf(c)).emergency) {
 			for (int i = 1; i < cars.size(); i++) {
 				if (cars.get(i).emergency) {
 					flag = true;
@@ -75,7 +75,7 @@ public class Lane {
 				this.emergency = false;
 			}
 		}
-		return cars.remove(0);
+		return cars.remove(cars.indexOf(c));
 	}
 	
 	public void updateEnds(int x, int y) {
