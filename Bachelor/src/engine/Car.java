@@ -57,6 +57,7 @@ public class Car {
 			lastBallX = ballX;
 			lastBallY = ballY;
 
+			//get square
 			Square my_square = null;
 			for(int r = 0; r < squares.size(); r++) {
 				for (int w = 0; w < squares.get(r).lanes.size(); w++) {
@@ -67,6 +68,7 @@ public class Car {
 				}
 			}
 
+			//get join index and if rotate and increase
 			rotate = false;
 			boolean increase = false;
 			int index = 0;
@@ -83,6 +85,7 @@ public class Car {
 				}
 			}
 
+			//stop cars in same lane from hitting each other
 			if(lanes.get(this.lane).cars.size()>1) {
 				if(horizontal) {
 					if (right_start) {
@@ -244,9 +247,9 @@ public class Car {
 									my_square.rotate_lane = -1;
 									//try {
 									System.out.println(my_square.lanes_inside.toString());
-										my_square.lanes_inside.remove(my_square.lanes_inside.indexOf(this.lane));
+									my_square.lanes_inside.remove(my_square.lanes_inside.indexOf(this.lane));
 									//} catch (Exception e) {
-										//e.printStackTrace();
+									//e.printStackTrace();
 									//}
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar(this));
@@ -255,7 +258,7 @@ public class Car {
 						}
 					}
 				}
-				//System.out.println(my_square.rotate_lane+ " " +this.lane);
+
 				//for arriving and stopping
 			} else {
 				if (horizontal) {
@@ -289,9 +292,11 @@ public class Car {
 				}
 			}
 
+			//increase x and y
 			this.ballX += this.ballXVel;
 			this.ballY += this.ballYVel;
 
+			//leaving join algorithm
 			if(my_square != null) {
 				if (rotate && joins.get(index).duration == 3 && my_square.lanes.contains(new Integer(this.lane)) && my_square.rotate_lane == -1)
 					my_square.rotate_lane = this.lane;
@@ -314,7 +319,7 @@ public class Car {
 						}
 						for (int g = 0; g < lanes.get(emergency).cars.size(); g++) {
 							//if (lanes.get(emergency).cars.get(g).emergency)
-								//break;
+							//break;
 							Join temp_join = null;
 							for(int q = 0; q< joins.size(); q++) {
 								if (joins.get(q).start == lanes.get(emergency).cars.get(g).lane && joins.get(q).end == lanes.get(emergency).cars.get(g).directions.get(0)) {
@@ -337,7 +342,7 @@ public class Car {
 				}
 				if(horizontal) {
 					if (this.lane == 4 || this.lane == 2)
-					System.out.println(emergency_flag+" "+ emergency);
+						System.out.println(emergency_flag+" "+ emergency);
 					if (this.ballX + this.ballWidth == max && right_start) {
 						if ((!emergency_flag && emergency != -1) || (emergency == this.lane)||(emergency == -1 && my_square.rotate_lane == this.lane && my_square.can_rotate(this.lane))||(emergency == -1 && my_square.rotate_lane == -1 && my_square.number_cars < 3)) {							join = true;
 						my_square.number_cars++;
@@ -373,7 +378,11 @@ public class Car {
 					}
 				}
 			}
+
+			//detect collision
 			if (join) {
+
+				//rotate cars
 				if(rotate) {
 					//my_square.rotate = true;
 					if(increase) {
@@ -499,6 +508,8 @@ public class Car {
 						}
 					}
 				}
+
+
 				ArrayList<Integer[]> blocked_lanes = joins.get(index).blocked_lanes;
 				for(int k = 0; k < blocked_lanes.size(); k++) {
 					if (!lanes.get(blocked_lanes.get(k)[0]).cars.isEmpty()) {
