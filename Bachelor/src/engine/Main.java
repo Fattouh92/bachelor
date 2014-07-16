@@ -25,7 +25,7 @@ public class Main {
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split("\\s");
 				lanes.add(new Lane(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
-						Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Integer.parseInt(parts[5])));
+						Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Integer.parseInt(parts[5]), Integer.parseInt(parts[6])));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -78,7 +78,7 @@ public class Main {
 		}
 
 		try {
-			reader = new BufferedReader(new FileReader("cars2.txt"));
+			reader = new BufferedReader(new FileReader("cars.txt"));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -88,10 +88,10 @@ public class Main {
 			while ((line = reader.readLine()) != null) {
 				String[] parts = line.split("\\s");
 				ArrayList<Integer> Temp = new ArrayList<Integer>();
-				for (int c = 5; c < parts.length; c++) {
+				for (int c = 3; c < parts.length; c++) {
 					Temp.add(new Integer(Integer.parseInt(parts[c])));
 				}
-				Car temp_car = new Car(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]), Temp);
+				Car temp_car = new Car(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Temp);
 				if (lanes.get(Integer.parseInt(parts[0])).horizontal && lanes.get(Integer.parseInt(parts[0])).right_start) {
 					temp_car.ballX = temp_car.lastBallX = lanes.get(Integer.parseInt(parts[0])).x;
 					temp_car.ballY = temp_car.lastBallY = lanes.get(Integer.parseInt(parts[0])).y;

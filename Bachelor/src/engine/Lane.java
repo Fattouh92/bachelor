@@ -11,13 +11,15 @@ public class Lane {
 	boolean right_start;
 	boolean emergency;
 	int endX, endY;
-	
-	public Lane(int x, int y, int number, int distance, int hor, int right) {
+	int limit;
+
+	public Lane(int x, int y, int number, int distance, int hor, int right, int limit) {
 		super();
 		this.x = x;
 		this.y = y;
 		this.number = number;
 		this.distance = distance;
+		this.limit = limit;
 		if (hor == 0) {
 			this.horizontal = true;
 		} else {
@@ -46,7 +48,7 @@ public class Lane {
 			}
 		}
 	}
-	
+
 	public int emergency_car() {
 		for(int i = 0; i<cars.size(); i++) {
 			if (cars.get(i).emergency) {
@@ -55,13 +57,26 @@ public class Lane {
 		}
 		return -1;
 	}
-	
+
 	public void addCar(Car car) {
-		cars.add(car);
 		if (car.emergency)
 			this.emergency = true;
+		if(horizontal) {
+			if (right_start) {
+				car.ballXVel = 1;
+			} else {
+				car.ballXVel = -1;
+			}
+		} else {
+			if (right_start) {
+				car.ballYVel = 1;
+			} else {
+				car.ballYVel = -1;
+			}
+		}
+		cars.add(car);
 	}
-	
+
 	public Car removeCar(Car c) {
 		boolean flag = false;
 		if (cars.get(cars.indexOf(c)).emergency) {
@@ -77,7 +92,28 @@ public class Lane {
 		}
 		return cars.remove(cars.indexOf(c));
 	}
-	
+
+	public int occupied() {
+		int car_size = 0;
+		for(int i = 0; i < cars.size(); i++) {
+			if (this.horizontal) {
+				car_size += cars.get(i).ballWidth;
+			} else {
+				car_size += cars.get(i).ballHeight;
+			}
+		}
+		return car_size*100/this.distance;
+	}
+
+	public int car_waiting() {
+		for (int i = 0; i < cars.size(); i++) {
+			if (!cars.get(i).join) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	public void updateEnds(int x, int y) {
 		this.endX -= x;
 		this.endY -= y;
