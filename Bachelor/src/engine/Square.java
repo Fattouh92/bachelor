@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Square {
 	ArrayList<Integer> lanes = new ArrayList<Integer>();
+	int selected_lane = -1;
 	//int lane_selected = -1;
 	//int number_cars = 0;
 	//int rotate_lane = -1;

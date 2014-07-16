@@ -196,6 +196,7 @@ public class Car {
 								this.ballYVel = 0;
 								this.join = false;
 								if(my_square != null) {
+									my_square.selected_lane = -1;
 									//my_square.number_cars--;
 									//my_square.rotate_lane = -1;
 									//my_square.lanes_inside.remove(my_square.lanes_inside.indexOf(this.lane));
@@ -209,6 +210,7 @@ public class Car {
 								this.ballYVel = 0;
 								this.join = false;
 								if(my_square != null) {
+									my_square.selected_lane = -1;
 									//my_square.number_cars--;
 									//my_square.rotate_lane = -1;
 									//my_square.lanes_inside.remove(my_square.lanes_inside.indexOf(this.lane));
@@ -224,6 +226,7 @@ public class Car {
 								this.ballXVel = 0;
 								this.join = false;
 								if(my_square != null) {
+									my_square.selected_lane = -1;
 									//my_square.number_cars--;
 									//my_square.rotate_lane = -1;
 									//my_square.lanes_inside.remove(my_square.lanes_inside.indexOf(this.lane));
@@ -237,6 +240,7 @@ public class Car {
 								this.ballXVel = 0;
 								this.join = false;
 								if(my_square != null) {
+									my_square.selected_lane = -1;
 									//my_square.number_cars--;
 									//my_square.rotate_lane = -1;
 									//my_square.lanes_inside.remove(my_square.lanes_inside.indexOf(this.lane));
@@ -252,6 +256,7 @@ public class Car {
 							if(this.ballX == lanes.get(directions.get(0)).x && this.ballY == lanes.get(directions.get(0)).y) {
 								this.join = false;
 								if(my_square != null) {
+									my_square.selected_lane = -1;
 									//my_square.number_cars--;
 									//my_square.rotate_lane = -1;
 									//my_square.lanes_inside.remove(my_square.lanes_inside.indexOf(this.lane));
@@ -263,6 +268,7 @@ public class Car {
 							if(this.ballX+this.ballWidth == lanes.get(directions.get(0)).x + lanes.get(directions.get(0)).distance && this.ballY == lanes.get(directions.get(0)).y) {
 								this.join = false;
 								if(my_square != null) {
+									my_square.selected_lane = -1;
 									//my_square.number_cars--;
 									//my_square.rotate_lane = -1;
 									//my_square.lanes_inside.remove(my_square.lanes_inside.indexOf(this.lane));
@@ -276,6 +282,7 @@ public class Car {
 							if(this.ballX == lanes.get(directions.get(0)).x && this.ballY == lanes.get(directions.get(0)).y) {
 								this.join = false;
 								if(my_square != null) {
+									my_square.selected_lane = -1;
 									//my_square.number_cars--;
 									//my_square.rotate_lane = -1;
 									//my_square.lanes_inside.remove(my_square.lanes_inside.indexOf(this.lane));
@@ -287,6 +294,7 @@ public class Car {
 							if(this.ballX == lanes.get(directions.get(0)).x && this.ballY+this.ballHeight == lanes.get(directions.get(0)).y+lanes.get(directions.get(0)).distance) {
 								this.join = false;
 								if(my_square != null) {
+									my_square.selected_lane = -1;
 									//my_square.number_cars--;
 									//my_square.rotate_lane = -1;
 									//try {
@@ -342,7 +350,11 @@ public class Car {
 
 			//leaving join algorithm
 			if(my_square != null) {
-				int selected_lane = my_square.selected_lane(lanes);
+				int selected_lane = my_square.selected_lane;
+				if (my_square.selected_lane == -1) {
+					selected_lane = my_square.selected_lane(lanes);
+					my_square.selected_lane = selected_lane;
+				}
 				System.out.println(this.lane+" "+this.delay_count);
 				boolean emergency_flag = false;
 				Join emergency_join = null;
