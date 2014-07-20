@@ -5,10 +5,9 @@ import java.util.ArrayList;
 public class Square {
 	ArrayList<Integer> lanes = new ArrayList<Integer>();
 	int selected_lane = -1;
-	//int lane_selected = -1;
 	//int number_cars = 0;
 	//int rotate_lane = -1;
-	//ArrayList<Integer> lanes_inside = new ArrayList<Integer>();
+	ArrayList<Integer> lanes_inside = new ArrayList<Integer>();
 
 	public Square(ArrayList<Integer> lanes) {
 		this.lanes = lanes;
@@ -56,30 +55,32 @@ public class Square {
 		int index = -1;
 		for (int i = 0; i < lanes.size(); i++) {
 			if(!lanes.get(i).cars.isEmpty() && this.lanes.contains(new Integer(lanes.get(i).number))) {
-				int weight = 0;
-				if (lanes.get(i).cars.get(0).type == 0) {
-					weight = 1000;
-				} else {
-					weight = 4000;
-				}
-				int speed = 0;
-				if (lanes.get(i).horizontal) {
-					if (lanes.get(i).right_start) {
-						speed = (int) (lanes.get(i).cars.get(0).ballXVel * weight);
+				for (int j = 0; j < lanes.get(i).cars.size(); j++) {
+					int weight = 0;
+					if (lanes.get(i).cars.get(j).type == 0) {
+						weight = 1000;
 					} else {
-						speed = (int) (-lanes.get(i).cars.get(0).ballXVel * weight);
+						weight = 4000;
 					}
-				} else {
-					if (lanes.get(i).right_start) {
-						speed = (int) (lanes.get(i).cars.get(0).ballYVel * weight);
+					int speed = 0;
+					if (lanes.get(i).horizontal) {
+						if (lanes.get(i).right_start) {
+							speed = (int) (lanes.get(i).cars.get(j).ballXVel * weight);
+						} else {
+							speed = (int) (-lanes.get(i).cars.get(j).ballXVel * weight);
+						}
 					} else {
-						speed = (int) (-lanes.get(i).cars.get(0).ballYVel * weight);
-					}
+						if (lanes.get(i).right_start) {
+							speed = (int) (lanes.get(i).cars.get(j).ballYVel * weight);
+						} else {
+							speed = (int) (-lanes.get(i).cars.get(j).ballYVel * weight);
+						}
 
-				}
-				if (speed > max) {
-					max = speed;
-					index = i;
+					}
+					if (speed > max) {
+						max = speed;
+						index = i;
+					}
 				}
 			}
 		}
@@ -98,7 +99,7 @@ public class Square {
 				}
 			}
 		}
-		if (max >= 50) {
+		if (max >= 70) {
 			return index;
 		} else {
 			return -1;
@@ -111,6 +112,7 @@ public class Square {
 		int delay_lane = this.max_delay_count(lanes);
 		int energy_lane = this.max_energy(lanes);
 		if (emergency != -1) {
+			System.out.println(" emergency "+emergency);
 			return emergency;
 		} else if (delay_lane != -1) {
 			System.out.println("delay "+ delay_lane);

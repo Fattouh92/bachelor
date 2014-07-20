@@ -239,16 +239,16 @@ public class Gui extends JFrame implements ActionListener
 					ArrayList<Integer> temp_directions = lanes.get(c).getCars().get(i).getDirections(); 
 					g2d.setColor(lanes.get(c).getCars().get(i).getColor());
 					if(!lanes.get(c).getCars().get(i).isArrived()) {
-						if (!lanes.get(c).getCars().get(i).isJoin()) {
-							Lane temp_lane = this.lanes.get(lanes.get(c).getCars().get(i).getLane());
-							if (temp_lane.isHorizontal()) {
-								g2d.fillRect(temp_lane.getX(), temp_lane.getY() + 15, temp_lane.getDistance(), 10);
-							} else {
-								g2d.fillRect(temp_lane.getX() + 15, temp_lane.getY(), 10,temp_lane.getDistance());
-							}
+						//if (!lanes.get(c).getCars().get(i).isJoin()) {
+						Lane temp_lane = this.lanes.get(lanes.get(c).getCars().get(i).getLane());
+						if (temp_lane.isHorizontal()) {
+							g2d.fillRect(temp_lane.getX(), temp_lane.getY() + 15, temp_lane.getDistance(), 10);
+						} else {
+							g2d.fillRect(temp_lane.getX() + 15, temp_lane.getY(), 10,temp_lane.getDistance());
 						}
+						//}
 						for(int d = 0; d< temp_directions.size(); d++) {
-							Lane temp_lane = lanes.get(temp_directions.get(d));
+							temp_lane = lanes.get(temp_directions.get(d));
 							if (temp_lane.isHorizontal()) {
 								g2d.fillRect(temp_lane.getX(), temp_lane.getY() + 15, temp_lane.getDistance(), 10);
 							} else {
