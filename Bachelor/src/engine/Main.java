@@ -10,6 +10,7 @@ public class Main {
 	ArrayList<Lane> lanes = new ArrayList<Lane>();
 	ArrayList<Join> joins = new ArrayList<Join>();
 	ArrayList<Square> squares = new ArrayList<Square>();
+	ArrayList<Rule> rules = new ArrayList<Rule>();
 
 	public void read() {
 		BufferedReader reader = null;
@@ -71,6 +72,23 @@ public class Main {
 					Temp.add(new Integer(Integer.parseInt(parts[c])));
 				}
 				squares.add(new Square(Temp));
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			reader = new BufferedReader(new FileReader("rules.txt"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		line = null;
+		try {
+			while ((line = reader.readLine()) != null) {
+				String[] parts = line.split("\\s");
+				rules.add(new Rule(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]),  Integer.parseInt(parts[3]),  Integer.parseInt(parts[4])));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
