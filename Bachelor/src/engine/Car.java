@@ -23,7 +23,7 @@ public class Car {
 	boolean stop_rotate = false;
 	int type;
 	boolean waiting;
-	boolean correct = false;
+	//boolean correct = false;
 
 	int lastDrawX, lastDrawY;
 
@@ -112,7 +112,7 @@ public class Car {
 								break;
 							Car car1 = lanes.get(this.lane).cars.get(a);
 							Car car2 = lanes.get(this.lane).cars.get(a+1);
-							if (car1.ballX >= car2.ballX+car2.ballWidth) {
+							if (car1.ballX <= car2.ballX+car2.ballWidth) {
 								car2.ballXVel = 0;
 								if (car1.waiting) {
 									car2.waiting = true;
@@ -145,7 +145,6 @@ public class Car {
 							Car car1 = lanes.get(this.lane).cars.get(a);
 							Car car2 = lanes.get(this.lane).cars.get(a+1);
 							if (car1.ballY <= car2.ballY+car2.ballHeight) {
-								System.out.println("zddadsadasdsadsadasdas");
 								car2.ballYVel = 0;
 								if (car1.waiting) {
 									car2.waiting = true;
@@ -161,7 +160,6 @@ public class Car {
 							Car car1 = lanes.get(this.lane).cars.get(a);
 							Car car2 = lanes.get(this.lane).cars.get(a+1);
 							if (car2.ballY <= car1.ballY+car1.ballHeight) {
-								System.out.println("zddadsadasdsadsadasdas");
 								car2.ballYVel = 0;
 								if (car1.waiting) {
 									car2.waiting = true;
@@ -173,9 +171,6 @@ public class Car {
 					}
 				}
 			}
-
-			horizontal = lanes.get(this.lane).horizontal;
-			right_start = lanes.get(this.lane).right_start;
 
 			if (!waiting) {
 				if (horizontal) {
@@ -220,6 +215,7 @@ public class Car {
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar(this));
 								this.lane = this.directions.remove(0);
+								return;
 							}
 						} else {
 							if((this.ballY >= lanes.get(directions.get(0)).y && right_start) || (this.ballY <= lanes.get(directions.get(0)).y && !right_start)) {
@@ -236,6 +232,7 @@ public class Car {
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar(this));
 								this.lane = this.directions.remove(0);
+								return;
 							}
 						}
 					} else {
@@ -254,6 +251,7 @@ public class Car {
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar(this));
 								this.lane = this.directions.remove(0);
+								return;
 							}
 						} else {
 							if ((this.ballX >= lanes.get(directions.get(0)).x && right_start) || (this.ballX <= lanes.get(directions.get(0)).x && !right_start)) {
@@ -270,6 +268,7 @@ public class Car {
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar(this));
 								this.lane = this.directions.remove(0);
+								return;
 							}
 						}
 					}
@@ -288,6 +287,7 @@ public class Car {
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar(this));
 								this.lane = this.directions.remove(0);
+								return;
 							}
 						} else {
 							if(this.ballX+this.ballWidth < lanes.get(directions.get(0)).x + lanes.get(directions.get(0)).distance && this.ballY == lanes.get(directions.get(0)).y && join) {
@@ -302,6 +302,7 @@ public class Car {
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar(this));
 								this.lane = this.directions.remove(0);
+								return;
 							}
 						}
 					} else {
@@ -318,6 +319,7 @@ public class Car {
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar(this));
 								this.lane = this.directions.remove(0);
+								return;
 							}
 						} else {
 							if(this.ballX == lanes.get(directions.get(0)).x && this.ballY+this.ballHeight < lanes.get(directions.get(0)).y+lanes.get(directions.get(0)).distance && join) {
@@ -337,6 +339,7 @@ public class Car {
 								}
 								lanes.get(directions.get(0)).addCar(lanes.get(this.lane).removeCar(this));
 								this.lane = this.directions.remove(0);
+								return;
 							}
 						}
 					}
@@ -413,9 +416,11 @@ public class Car {
 					for (int g = 0; g < lanes.get(selected_lane).cars.size(); g++) {
 						Join temp_join = null;
 						for(int q = 0; q< joins.size(); q++) {
-							if (joins.get(q).start == lanes.get(selected_lane).cars.get(g).lane && joins.get(q).end == lanes.get(selected_lane).cars.get(g).directions.get(0)) {
-								temp_join = joins.get(q);
-								break;
+							if(!directions.isEmpty()) {
+								if (joins.get(q).start == lanes.get(selected_lane).cars.get(g).lane && joins.get(q).end == lanes.get(selected_lane).cars.get(g).directions.get(0)) {
+									temp_join = joins.get(q);
+									break;
+								}
 							}
 						}
 						for (int f = 0; f < temp_join.blocked_lanes.size(); f++) {
@@ -428,11 +433,7 @@ public class Car {
 				if(horizontal) {
 					if (this.ballX + this.ballWidth >= max && right_start) {
 						if (this.lane == selected_lane || !emergency_flag || joins.get(index).duration == 1) {
-							if (!correct) {
-								correct = true;
-								this.ballX = max - this.ballWidth;
-								this.ballXVel = this.ballYVel = 0;
-							}
+					
 							join = true;
 							this.delay_count = 1;
 							this.waiting = false;
@@ -448,11 +449,7 @@ public class Car {
 					}
 					if (this.ballX <= min && !right_start) {
 						if (this.lane == selected_lane || !emergency_flag || joins.get(index).duration == 1) {
-							if (!correct) {
-								correct = true;
-								this.ballX = min;
-								this.ballXVel = this.ballYVel = 0;
-							}
+							
 							join = true;
 							this.delay_count = 1;
 							this.waiting = false;
@@ -470,11 +467,7 @@ public class Car {
 				} else {
 					if (this.ballY + this.ballHeight >= max && right_start ) {
 						if (this.lane == selected_lane || !emergency_flag || joins.get(index).duration == 1) {
-							if (!correct) {
-								correct = true;
-								this.ballY = max - this.ballHeight;
-								this.ballXVel = this.ballYVel = 0;
-							}
+							
 							join = true;
 							this.delay_count = 1;
 							this.waiting = false;
@@ -491,11 +484,7 @@ public class Car {
 					}
 					if (this.ballY <= min && !right_start) {
 						if (this.lane == selected_lane || !emergency_flag || joins.get(index).duration == 1) {
-							if (!correct) {
-								correct = true;
-								this.ballY = min;
-								this.ballXVel = this.ballYVel = 0;
-							}
+							
 							join = true;
 							this.delay_count = 1;
 							this.waiting = false;
