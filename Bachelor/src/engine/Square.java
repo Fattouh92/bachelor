@@ -108,35 +108,36 @@ public class Square {
 
 	public int selected_lane (ArrayList<Lane> lanes, ArrayList<Rule> rules) {
 		int emergency = 0, occupied_lane = 0, delay_lane = 0, energy_lane = 0;
+		int lane = -1;
 		int rule_index = -1;
 		for (int p = 0; p < rules.size(); p++) {
 			Rule temp_rule = rules.get(p);
 			if(temp_rule.emergency == 1) {
 				switch (temp_rule.method_called) {
-				case 1: emergency = this.emergency_lane(lanes);
-				return emergency;
-				case -1: emergency = -1;
-				case 3: emergency = this.max_energy(lanes);
-				return emergency;
+				case 1: lane = this.emergency_lane(lanes);
+				return lane;
+				case -1: lane = -1;
+				case 3: lane = this.max_energy(lanes);
+				return lane;
 				}
 			} else {
 				if(temp_rule.emergency == 2) {
 					switch (temp_rule.method_called) {
-					case -1: occupied_lane = -1;
-					case 4: occupied_lane = this.occupied_lane(lanes, temp_rule.compare_value);
-					return occupied_lane;
+					case -1: lane = -1;
+					case 4: lane = this.occupied_lane(lanes, temp_rule.compare_value);
+					return lane;
 					}
 				} else {
 					if (temp_rule.car_type == -1) {
 						if (temp_rule.join_type != -1) {
 							switch (temp_rule.method_called) {
-							case 1: energy_lane = this.max_energy(lanes);
-							return energy_lane;
-							case 3:	energy_lane = this.max_energy(lanes);
-							return energy_lane;
+							case 1: lane = this.max_energy(lanes);
+							return lane;
+							case 3:	lane = this.max_energy(lanes);
+							return lane;
 							}
 						} else {
-
+							
 						}
 					} else {
 						if (temp_rule.join_type != -1) {
