@@ -51,7 +51,7 @@ public class Car {
 	}
 
 	public void update2(int min, int max,
-			ArrayList<Lane> lanes, ArrayList<Join> joins, ArrayList<Square> squares) {
+			ArrayList<Lane> lanes, ArrayList<Join> joins, ArrayList<Square> squares, ArrayList<Rule> rules) {
 		boolean horizontal = lanes.get(this.lane).horizontal;
 		boolean right_start = lanes.get(this.lane).right_start;
 		int limit = lanes.get(this.lane).limit;
@@ -390,11 +390,21 @@ public class Car {
 			this.ballX += this.ballXVel;
 			this.ballY += this.ballYVel;
 
-			//leaving join algorithm
+			//join algorithm
 			if(my_square != null) {
+				/*int rule_index = -1;
+				for (int p = 0; p < rules.size(); p++) {
+					Rule temp_rule = rules.get(p);
+					if(temp_rule.emergency && this.emergency) {
+						rule_index = p;
+					} else {
+						
+					}
+					
+				}*/
 				int selected_lane = my_square.selected_lane;
 				if (my_square.selected_lane == -1) {  
-					selected_lane = my_square.selected_lane(lanes);
+					selected_lane = my_square.selected_lane(lanes, rules);
 					my_square.selected_lane = selected_lane;
 					my_square.increase_delay_count(lanes);
 				}

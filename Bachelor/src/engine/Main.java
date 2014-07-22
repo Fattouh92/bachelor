@@ -181,4 +181,12 @@ public class Main {
 	public void setSquares(ArrayList<Square> squares) {
 		this.squares = squares;
 	}
+
+	public ArrayList<Rule> getRules() {
+		return rules;
+	}
+
+	public void setRules(ArrayList<Rule> rules) {
+		this.rules = rules;
+	}
 }
