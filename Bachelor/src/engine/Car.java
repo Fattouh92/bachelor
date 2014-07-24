@@ -12,7 +12,7 @@ public class Car {
 	boolean join = false;
 	int delay_count = 1;
 	int priority = 0;
-	boolean emergency;
+	boolean emergency, false_emergency;
 	ArrayList<Integer> directions;
 	boolean arrived;
 	Car blocked_car;
@@ -55,7 +55,7 @@ public class Car {
 		boolean horizontal = lanes.get(this.lane).horizontal;
 		boolean right_start = lanes.get(this.lane).right_start;
 		int limit = lanes.get(this.lane).limit;
-		System.out.println(this.ballYVel+" "+this.lane+" "+this.join+ " "+this.angle+" "+this.waiting);
+		//System.out.println(this.ballYVel+" "+this.lane+" "+this.join+ " "+this.angle+" "+this.waiting);
 		if(arrived) {
 
 		} else {
@@ -405,6 +405,7 @@ public class Car {
 				int selected_lane = my_square.selected_lane;
 				if (my_square.selected_lane == -1) {  
 					selected_lane = my_square.selected_lane(lanes, rules);
+					System.out.println(selected_lane);
 					my_square.selected_lane = selected_lane;
 					my_square.increase_delay_count(lanes);
 				}
@@ -442,7 +443,7 @@ public class Car {
 
 				if(horizontal) {
 					if (this.ballX + this.ballWidth >= max && right_start) {
-						if (this.lane == selected_lane || !emergency_flag || joins.get(index).duration == 1) {
+						if (this.lane == selected_lane || !emergency_flag || (joins.get(index).duration == 1 && Main.right_turn)) {
 					
 							join = true;
 							this.delay_count = 1;
@@ -458,7 +459,7 @@ public class Car {
 						}
 					}
 					if (this.ballX <= min && !right_start) {
-						if (this.lane == selected_lane || !emergency_flag || joins.get(index).duration == 1) {
+						if (this.lane == selected_lane || !emergency_flag || (joins.get(index).duration == 1 && Main.right_turn)) {
 							
 							join = true;
 							this.delay_count = 1;
@@ -476,7 +477,7 @@ public class Car {
 					}
 				} else {
 					if (this.ballY + this.ballHeight >= max && right_start ) {
-						if (this.lane == selected_lane || !emergency_flag || joins.get(index).duration == 1) {
+						if (this.lane == selected_lane || !emergency_flag || (joins.get(index).duration == 1 && Main.right_turn)) {
 							
 							join = true;
 							this.delay_count = 1;
@@ -493,7 +494,7 @@ public class Car {
 						}
 					}
 					if (this.ballY <= min && !right_start) {
-						if (this.lane == selected_lane || !emergency_flag || joins.get(index).duration == 1) {
+						if (this.lane == selected_lane || !emergency_flag || (joins.get(index).duration == 1 && Main.right_turn)) {
 							
 							join = true;
 							this.delay_count = 1;

@@ -8,6 +8,7 @@ public class Square {
 	//int number_cars = 0;
 	//int rotate_lane = -1;
 	ArrayList<Integer> lanes_inside = new ArrayList<Integer>();
+	int called_times = 0;
 
 	public Square(ArrayList<Integer> lanes) {
 		this.lanes = lanes;
@@ -88,6 +89,48 @@ public class Square {
 		return index;
 	}
 
+	public int max_energy2 (ArrayList<Lane> lanes) {
+		System.out.println("sdafdsafsdafdsfdsfssdfsdf");
+		int max = -1;
+		int index = -1;
+		for (int i = 0; i < lanes.size(); i++) {
+			if(!lanes.get(i).cars.isEmpty() && this.lanes.contains(new Integer(lanes.get(i).number))) {
+				for (int j = 0; j < lanes.get(i).cars.size(); j++) {
+					int weight = 0;
+					if (lanes.get(i).cars.get(j).type == 0) {
+						weight = 1000;
+					} else {
+						weight = 4000;
+					}
+					int speed = 0;
+					if (lanes.get(i).horizontal) {
+						if (lanes.get(i).right_start) {
+							speed = (int) (lanes.get(i).limit * weight);
+						} else {
+							speed = (int) (lanes.get(i).limit * weight);
+						}
+					} else {
+						if (lanes.get(i).right_start) {
+							speed = (int) (lanes.get(i).limit * weight);
+						} else {
+							speed = (int) (lanes.get(i).limit * weight);
+						}
+
+					}
+					if (speed > max) {
+						max = speed;
+						index = i;
+					}
+				}
+			}
+		}
+		//System.out.println("sdsdsds "+index);
+		if (index != -1)
+			this.called_times = 1;
+		return index;
+	}
+
+
 	public int occupied_lane(ArrayList<Lane> lanes, int value) {
 		double max = 0;
 		int index = -1;
@@ -114,21 +157,42 @@ public class Square {
 			Rule temp_rule = rules.get(p);
 			if(temp_rule.emergency == 1) {
 				switch (temp_rule.method_called) {
-				case 1: lane = this.emergency_lane(lanes);
-				return lane;
+				case 1: 
+					lane = this.emergency_lane(lanes);
+					if (lane != -1)
+						return lane;
 				case -1: lane = -1;
-				case 3: lane = this.max_energy(lanes);
-				return lane;
+				case 3:
+					if (this.called_times == 0) 
+						lane = this.max_energy2(lanes);
+					else
+						lane = this.max_energy(lanes);
+					if (lane != -1)
+						return lane;
+					return lane;
 				}
 			} else {
 				if(temp_rule.emergency == 2) {
 					switch (temp_rule.method_called) {
 					case -1: lane = -1;
 					case 4: lane = this.occupied_lane(lanes, temp_rule.compare_value);
-					return lane;
+					if (lane != -1)
+						return lane;
 					}
 				} else {
-					if (temp_rule.car_type == -1) {
+					switch (temp_rule.method_called) {
+					case 2: lane = this.max_delay_count(lanes, temp_rule.compare_value);
+					if (lane != -1)
+					return lane;
+					case 3:	
+						if (this.called_times == 0) 
+							lane = this.max_energy2(lanes);
+						else
+							lane = this.max_energy(lanes);
+						if (lane != -1)
+							return lane;
+					}
+					/*if (temp_rule.car_type == -1) {
 						if (temp_rule.join_type != -1) {
 							switch (temp_rule.method_called) {
 							case 1: lane = this.max_energy(lanes);
@@ -137,7 +201,7 @@ public class Square {
 							return lane;
 							}
 						} else {
-							
+
 						}
 					} else {
 						if (temp_rule.join_type != -1) {
@@ -145,7 +209,7 @@ public class Square {
 						} else {
 
 						}
-					}
+					}*/
 				}
 			}
 		}

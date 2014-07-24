@@ -11,6 +11,7 @@ public class Main {
 	ArrayList<Join> joins = new ArrayList<Join>();
 	ArrayList<Square> squares = new ArrayList<Square>();
 	ArrayList<Rule> rules = new ArrayList<Rule>();
+	public static boolean right_turn = false;
 
 	public void read() {
 		BufferedReader reader = null;
@@ -87,6 +88,9 @@ public class Main {
 		line = null;
 		try {
 			while ((line = reader.readLine()) != null) {
+				if (line.equals("0 1 -1 -1 -1")) {
+					Main.right_turn = true;
+				}
 				String[] parts = line.split("\\s");
 				rules.add(new Rule(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]),  Integer.parseInt(parts[3]),  Integer.parseInt(parts[4])));
 			}
